@@ -5,7 +5,7 @@
 
 
 // const api = axios.create({
-//   baseURL: "http://localhost:5000/api",
+//   baseURL: "https://tmscmt.netlify.app/api",
 //   headers: {
 //     "Content-Type": "application/json",
 //   },
@@ -26,7 +26,7 @@ import axios from "axios";
 import { secureStorage } from "@/utils/secureStorage";
 
 // ✅ Base URLs
-export const BASE_URL = "http://localhost:5000";
+export const BASE_URL = "https://tmscmt.netlify.app/";
 
 export const API_URL = `${BASE_URL}/api`;
 

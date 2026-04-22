@@ -19,7 +19,7 @@
 //   const [data, setData] = useState(null);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState("");
-  
+
 
 //   //  FETCH DATA
 //   useEffect(() => {
@@ -31,7 +31,7 @@
 //       const token = secureStorage.getItem("token");
 
 //       const res = await axios.get(
-//         `http://localhost:5000/api/v1/temple/seva-bookings/${id}`,
+//         `https://tmscmt.netlify.app/api/v1/temple/seva-bookings/${id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -90,7 +90,7 @@
 //               height: 350px;
 //   background: url('${
 //   data?.temple_logo
-//     ? `http://localhost:5000/public/temple/${data.temple_logo}`
+//     ? `https://tmscmt.netlify.app/public/temple/${data.temple_logo}`
 //     : ""
 // }') no-repeat center/contain;
 //               opacity: 0.06;
@@ -212,11 +212,11 @@
 
 //               {/* HEADER */}
 //               <div className="header">
-              
+
 //                 <img
 //                     src={
 //                       data?.temple_logo
-//                         ? `http://localhost:5000/public/temple/${data.temple_logo}`
+//                         ? `https://tmscmt.netlify.app/public/temple/${data.temple_logo}`
 //                         : image
 //                     }
 //                     alt="logo"
@@ -242,7 +242,7 @@
 //                    <img
 //                     src={
 //                       data?.deity_image
-//                         ? `http://localhost:5000/public/deities/${data.deity_image}`
+//                         ? `https://tmscmt.netlify.app/public/deities/${data.deity_image}`
 //                         : ""
 //                     }
 //                     alt="logo"
@@ -371,11 +371,10 @@ function PrintSevabooking() {
               transform: translate(-50%, -50%);
               width: 350px;
               height: 350px;
-              background: url('${
-                data?.temple_logo
-                  ? getImage("temple", data.temple_logo)
-                  : ""
-              }') no-repeat center/contain;
+              background: url('${data?.temple_logo
+        ? getImage("temple", data.temple_logo)
+        : ""
+      }') no-repeat center/contain;
               opacity: 0.06;
               z-index: 0;
             }
@@ -540,9 +539,9 @@ function PrintSevabooking() {
                     (Rupees{" "}
                     {data?.seva_amount
                       ? toWords(data.seva_amount).replace(
-                          /(^\w|\s\w)/g,
-                          (m) => m.toUpperCase()
-                        )
+                        /(^\w|\s\w)/g,
+                        (m) => m.toUpperCase()
+                      )
                       : ""}{" "}
                     Only)
                   </p>

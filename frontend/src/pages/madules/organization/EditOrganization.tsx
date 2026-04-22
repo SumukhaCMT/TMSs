@@ -53,7 +53,7 @@ export default function EditOrganization() {
 
         const res = await fetch(
 
-          `http://localhost:5000/api/v1/organizations/register/${id}`,
+          `https://tmscmt.netlify.app/api/v1/organizations/register/${id}`,
 
           {
 
@@ -68,7 +68,7 @@ export default function EditOrganization() {
         )
 
         const data = await res.json()
-     
+
         if (!res.ok)
           throw new Error(data.message)
 
@@ -164,7 +164,7 @@ export default function EditOrganization() {
 
       const res = await fetch(
 
-        `http://localhost:5000/api/v1/organizations/register/${id}`,
+        `https://tmscmt.netlify.app/api/v1/organizations/register/${id}`,
 
         {
 

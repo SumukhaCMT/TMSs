@@ -33,7 +33,7 @@ export default function EditSeva() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `http://localhost:5000/api/v1/temple/sevas/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/sevas/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ export default function EditSeva() {
       const token = secureStorage.getItem("token")
 
       await axios.put(
-        `http://localhost:5000/api/v1/temple/sevas/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/sevas/${id}`,
         formData,
         {
           headers: {

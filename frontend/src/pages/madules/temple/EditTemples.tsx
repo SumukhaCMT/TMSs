@@ -17,7 +17,7 @@ export default function EditSeva() {
 
   const [error, setError] = useState("")
   const [errors, setErrors] = useState<Record<string, string>>({})
-  //  const IMAGE_URL = "http://localhost:5000/public/temple/"; 
+  //  const IMAGE_URL = "https://tmscmt.netlify.app/public/temple/"; 
 
   // ✅ NEW: location state
   const [location, setLocation] = useState({
@@ -36,7 +36,7 @@ export default function EditSeva() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `http://localhost:5000/api/v1/temple/temples/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/temples/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,84 +62,84 @@ export default function EditSeva() {
   }
 
   //  UPDATE
-  
 
-const handleSubmit = async (formData: any) => {
-  setErrors({})
-  setError("")
 
-  try {
-    const token = secureStorage.getItem("token")
+  const handleSubmit = async (formData: any) => {
+    setErrors({})
+    setError("")
 
-    const payload = new FormData()
+    try {
+      const token = secureStorage.getItem("token")
 
-    // =====================================
-    //  append all fields EXCEPT img, lat, lng
-    // =====================================
-    Object.keys(formData).forEach((key) => {
-      if (
-        key !== "img_name" &&
-        key !== "lat" &&
-        key !== "lng" &&
-        formData[key] !== undefined &&
-        formData[key] !== null
-      ) {
-        payload.append(key, formData[key])
+      const payload = new FormData()
+
+      // =====================================
+      //  append all fields EXCEPT img, lat, lng
+      // =====================================
+      Object.keys(formData).forEach((key) => {
+        if (
+          key !== "img_name" &&
+          key !== "lat" &&
+          key !== "lng" &&
+          formData[key] !== undefined &&
+          formData[key] !== null
+        ) {
+          payload.append(key, formData[key])
+        }
+      })
+
+      // =====================================
+      //  FIX: append lat/lng PROPERLY
+      // =====================================
+      payload.append("lat", location.lat.toString())
+      payload.append("lng", location.lng.toString())
+
+      // =====================================
+      //  image handling
+      // =====================================
+      if (formData.img_name instanceof File) {
+        const compressedFile = await imageCompression(
+          formData.img_name,
+          {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+            fileType: "image/webp",
+          }
+        )
+
+        const webpFile = new File(
+          [compressedFile],
+          formData.img_name.name.replace(/\.[^/.]+$/, ".webp"),
+          { type: "image/webp" }
+        )
+
+        payload.append("img_name", webpFile)
       }
-    })
 
-    // =====================================
-    //  FIX: append lat/lng PROPERLY
-    // =====================================
-    payload.append("lat", location.lat.toString())
-    payload.append("lng", location.lng.toString())
-
-    // =====================================
-    //  image handling
-    // =====================================
-    if (formData.img_name instanceof File) {
-      const compressedFile = await imageCompression(
-        formData.img_name,
+      // =====================================
+      //  DON'T set Content-Type manually
+      // =====================================
+      await axios.put(
+        `https://tmscmt.netlify.app/api/v1/temple/temples/${id}`,
+        payload,
         {
-          maxSizeMB: 1,
-          maxWidthOrHeight: 1920,
-          useWebWorker: true,
-          fileType: "image/webp",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       )
 
-      const webpFile = new File(
-        [compressedFile],
-        formData.img_name.name.replace(/\.[^/.]+$/, ".webp"),
-        { type: "image/webp" }
-      )
+      toast.success("Temple Updated Successfully")
 
-      payload.append("img_name", webpFile)
+      setTimeout(() => {
+        navigate("/temples")
+      }, 1000)
+
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Update failed")
     }
-
-    // =====================================
-    //  DON'T set Content-Type manually
-    // =====================================
-    await axios.put(
-      `http://localhost:5000/api/v1/temple/temples/${id}`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-
-    toast.success("Temple Updated Successfully")
-
-    setTimeout(() => {
-      navigate("/temples")
-    }, 1000)
-
-  } catch (err: any) {
-    toast.error(err.response?.data?.message || "Update failed")
   }
-}
 
   if (loading) {
     return (
@@ -203,13 +203,13 @@ const handleSubmit = async (formData: any) => {
         onSubmit={handleSubmit}
         errors={errors}
         fields={[
-           {
+          {
             name: "img_name",
             label: "Image",
             type: "image",
-        
-            url: data.img_name ? IMAGE_URLS.temple + data.img_name : null, alt: data.name || "Temple Image" 
-           
+
+            url: data.img_name ? IMAGE_URLS.temple + data.img_name : null, alt: data.name || "Temple Image"
+
           },
           {
             name: "name",
@@ -223,7 +223,7 @@ const handleSubmit = async (formData: any) => {
             type: "text",
             placeholder: "Enter Address",
           },
-           
+
         ]}
       />
     </>

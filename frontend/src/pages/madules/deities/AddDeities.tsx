@@ -54,12 +54,12 @@ export default function AddDeity() {
       }
 
       await axios.post(
-        "http://localhost:5000/api/v1/temple/deities",
+        "https://tmscmt.netlify.app/api/v1/temple/deities",
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`
-           
+
           }
         }
       )
@@ -88,7 +88,7 @@ export default function AddDeity() {
       />
 
       <FormBuilder
-        key={resetKey}   
+        key={resetKey}
         title="Add Deities"
         submitLabel="Save"
         onSubmit={handleSubmit}

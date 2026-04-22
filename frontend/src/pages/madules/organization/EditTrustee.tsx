@@ -46,7 +46,7 @@ export default function EditTrustee() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `http://localhost:5000/api/v1/temple/trustees/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/trustees/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -81,7 +81,7 @@ export default function EditTrustee() {
       const token = secureStorage.getItem("token")
 
       await axios.put(
-        `http://localhost:5000/api/v1/temple/trustees/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/trustees/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -133,27 +133,27 @@ export default function EditTrustee() {
             name: "name",
             label: "Name",
             required: true,
-            placeholder : "Enter the name of the trustee"
+            placeholder: "Enter the name of the trustee"
           },
           {
             name: "email",
             label: "Email",
             type: "email",
             required: true,
-            placeholder : "Enter the email of the trustee"
+            placeholder: "Enter the email of the trustee"
           },
           {
             name: "phone",
             label: "Phone",
             type: "number",
             required: true,
-            placeholder : "Enter the phone number of the trustee"
+            placeholder: "Enter the phone number of the trustee"
           },
           {
             name: "position",
             label: "Position",
             required: true,
-            placeholder : "Enter the position of the trustee"
+            placeholder: "Enter the position of the trustee"
           },
 
           {
@@ -162,8 +162,8 @@ export default function EditTrustee() {
             type: "number",
             placeholder: "Enter the display order (numeric value)",
           },
-         
-          
+
+
           {
             name: "status",
             label: "Status",
@@ -171,11 +171,11 @@ export default function EditTrustee() {
             options: [
               { label: "Active", value: "active" },
               { label: "Inactive", value: "inactive" },
-             
+
             ]
           },
-        
-         
+
+
         ]}
       />
 

@@ -34,7 +34,7 @@ export default function EditDevotee() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        "http://localhost:5000/api/v1/temple/devotees",
+        "https://tmscmt.netlify.app/api/v1/temple/devotees",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ export default function EditDevotee() {
     try {
       //  Fetch all devotees to check duplicate
       const res = await axios.get(
-        "http://localhost:5000/api/v1/temple/devotees",
+        "https://tmscmt.netlify.app/api/v1/temple/devotees",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ export default function EditDevotee() {
 
       //  Update
       await axios.put(
-        `http://localhost:5000/api/v1/temple/devotees/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/devotees/${id}`,
         formData,
         {
           headers: {
@@ -141,15 +141,18 @@ export default function EditDevotee() {
         errors={errors}
         onSubmit={handleSubmit}
         fields={[
-          { name: "name", label: "Name",
+          {
+            name: "name", label: "Name",
             required: true,
             placeholder: "Enter the devotee's full name"
-           },
-          { name: "email", label: "Email",
+          },
+          {
+            name: "email", label: "Email",
             required: true,
             placeholder: "Enter the devotee's email address"
-           },
-          { name: "phone", label: "Phone" ,
+          },
+          {
+            name: "phone", label: "Phone",
             required: true,
             placeholder: "Enter the devotee's phone number"
           },
@@ -175,26 +178,30 @@ export default function EditDevotee() {
           { name: "rashi", label: "Rashi", placeholder: "Enter the devotee's rashi" },
           { name: "nakshatra", label: "Nakshatra", placeholder: "Enter the devotee's nakshatra" },
 
-         
 
-          { name: "address_line1", label: "Address Line 1",         required: true, placeholder: "Enter the first line of the devotee's address" },
+
+          { name: "address_line1", label: "Address Line 1", required: true, placeholder: "Enter the first line of the devotee's address" },
           { name: "address_line2", label: "Address Line 2", placeholder: "Enter the second line of the devotee's address (optional)" },
-          { name: "city", label: "City" ,
-                     required: true,
-                     placeholder: "Enter the city of residence"
+          {
+            name: "city", label: "City",
+            required: true,
+            placeholder: "Enter the city of residence"
           },
-          { name: "state", label: "State",
-                     required: true,
-                      placeholder: "Enter the state of residence"
-           },
-          { name: "country", label: "Country",
-                     required: true,
-                      placeholder: "Enter the country of residence"
-           },
-          { name: "pincode", label: "Pincode",
-              required: true,
-              placeholder: "Enter the postal code"
-           },
+          {
+            name: "state", label: "State",
+            required: true,
+            placeholder: "Enter the state of residence"
+          },
+          {
+            name: "country", label: "Country",
+            required: true,
+            placeholder: "Enter the country of residence"
+          },
+          {
+            name: "pincode", label: "Pincode",
+            required: true,
+            placeholder: "Enter the postal code"
+          },
 
           {
             name: "status",
@@ -205,7 +212,7 @@ export default function EditDevotee() {
               { label: "Inactive", value: "inactive" },
             ],
           },
-           {
+          {
             name: "remark",
             label: "Remark",
             type: "textarea",
@@ -220,7 +227,7 @@ export default function EditDevotee() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-               Devotee Updated Successfully
+              Devotee Updated Successfully
             </AlertDialogTitle>
           </AlertDialogHeader>
 

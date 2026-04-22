@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 import {
   Card,
   CardContent,
@@ -53,7 +53,7 @@ export default function OrganizationForm() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/v1/organizations/register",
+        "https://tmscmt.netlify.app/api/v1/organizations/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -21,15 +21,15 @@ import { validateSevaBookingForm } from "@/utils/validateSevaBooking";
 
 import {
   calendarTypeOptions,
-  
+
 } from "@/utils/hinduCalendarOptions";
 
 export default function AddSevaBooking() {
   const navigate = useNavigate();
   const token = secureStorage.getItem("token");
- const today = new Date().toISOString().split("T")[0]; //  FIXED
-const now = new Date();
-const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
+  const today = new Date().toISOString().split("T")[0]; //  FIXED
+  const now = new Date();
+  const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
 
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -39,8 +39,8 @@ const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
   const [deities, setDeities] = useState<any[]>([]);
   const [devotees, setDevotees] = useState<any[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [date,setDate] = useState("")
-  const [data,setData] = useState({})
+  const [date, setDate] = useState("")
+  const [data, setData] = useState({})
 
   // Fetch dropdown data
   useEffect(() => {
@@ -48,10 +48,10 @@ const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [sevaRes, deityRes, devoteeRes, paymentRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/v1/temple/sevas", { headers }),
-          axios.get("http://localhost:5000/api/v1/temple/deities", { headers }),
-          axios.get("http://localhost:5000/api/v1/temple/devotees", { headers }),
-          axios.get("http://localhost:5000/api/v1/temple/payment-methods", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/sevas", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/deities", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/devotees", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/payment-methods", { headers }),
         ]);
 
         setSevas(sevaRes.data.data);
@@ -123,10 +123,10 @@ const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
         internal_note: formData.internal_note || null,
       };
 
-      await axios.post("http://localhost:5000/api/v1/temple/seva-bookings", data, {
+      await axios.post("https://tmscmt.netlify.app/api/v1/temple/seva-bookings", data, {
         headers: { Authorization: `Bearer ${token}` },
       });
-// console.log(data)
+      // console.log(data)
       setDialogMessage("Booking created successfully");
       setOpen(true);
       setErrors({}); // clear errors on success
@@ -143,37 +143,37 @@ const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
     }
   };
 
-const handleDate = async (e:any, formState:any, setFormState:any) => {
+  const handleDate = async (e: any, formState: any, setFormState: any) => {
 
-  const value = e.target.value
+    const value = e.target.value
 
-  if(!value) return
+    if (!value) return
 
-  try{
+    try {
 
-    const res = await fetch(`http://localhost:5000/panchanga?date=${value}`)
-    const json = await res.json()
+      const res = await fetch(`https://tmscmt.netlify.app/panchanga?date=${value}`)
+      const json = await res.json()
 
-    // console.log("Panchanga:", json)
+      // console.log("Panchanga:", json)
 
-    setFormState({
-      ...formState,
-      scheduled_date: value,
-      hindu_tithi: json.tithi || "",
-      hindu_nakshatra: json.nakshatra || "",
-      devotee_rashi: json.rashi || "",
-      hindu_month: json.masa || "",
-      hindu_samvat: json.samvatsara || "",
-      hindu_paksha: json.paksha || "",
-      hindu_shaka_year:json.hindu_shaka_year || "",
+      setFormState({
+        ...formState,
+        scheduled_date: value,
+        hindu_tithi: json.tithi || "",
+        hindu_nakshatra: json.nakshatra || "",
+        devotee_rashi: json.rashi || "",
+        hindu_month: json.masa || "",
+        hindu_samvat: json.samvatsara || "",
+        hindu_paksha: json.paksha || "",
+        hindu_shaka_year: json.hindu_shaka_year || "",
 
-    })
+      })
 
-  }catch(err){
-    console.error("Panchanga error", err)
+    } catch (err) {
+      console.error("Panchanga error", err)
+    }
+
   }
-
-}
 
   return (
     <>
@@ -191,16 +191,16 @@ const handleDate = async (e:any, formState:any, setFormState:any) => {
         errors={errors} // <-- pass errors for inline display
         onSubmit={handleSubmit}
         defaultValues={{
-    scheduled_date: today,   //  auto select today
-     scheduled_time: currentTime, //  auto current time
-    quantity: 1,
-    calendar_type: "hindu",
-    is_recurring: "no",
-    payment_status: "pending",
-    status: "booked",
-  }}
+          scheduled_date: today,   //  auto select today
+          scheduled_time: currentTime, //  auto current time
+          quantity: 1,
+          calendar_type: "hindu",
+          is_recurring: "no",
+          payment_status: "pending",
+          status: "booked",
+        }}
         fields={[
- {
+          {
             name: "devotee_search",
             label: "Search Devotee",
             type: "search",
@@ -209,7 +209,7 @@ const handleDate = async (e:any, formState:any, setFormState:any) => {
 
             onSearch: async (value: string) => {
               const res = await axios.get(
-                `http://localhost:5000/api/v1/temple/devotees/search?q=${value}`,
+                `https://tmscmt.netlify.app/api/v1/temple/devotees/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               return res.data.data;
@@ -231,141 +231,143 @@ const handleDate = async (e:any, formState:any, setFormState:any) => {
             },
           },
           {
-  name: "seva_search",
-  label: "Search Seva",
-  type: "search",
-  placeholder: "Search Seva",
-  required: true,
+            name: "seva_search",
+            label: "Search Seva",
+            type: "search",
+            placeholder: "Search Seva",
+            required: true,
 
-  onSearch: async (value: string) => {
-    const res = await axios.get(
-      `http://localhost:5000/api/v1/temple/sevas/search?q=${value}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+            onSearch: async (value: string) => {
+              const res = await axios.get(
+                `https://tmscmt.netlify.app/api/v1/temple/sevas/search?q=${value}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
 
-    return res.data.data.map((item: any) => ({
-      ...item,
-      name: `${item.seva_name} - ₹${item.amount}`, //  change to name
-    }));
-  },
+              return res.data.data.map((item: any) => ({
+                ...item,
+                name: `${item.seva_name} - ₹${item.amount}`, //  change to name
+              }));
+            },
 
-  onSelect: (item: any, formState: any, setFormState: any) => {
-    setFormState({
-      ...formState,
-      seva_id: item.id,
-      seva_name: item.seva_name,
-      seva_amount: item.amount,
-      quantity: 1,
-    });
-  },
-},
+            onSelect: (item: any, formState: any, setFormState: any) => {
+              setFormState({
+                ...formState,
+                seva_id: item.id,
+                seva_name: item.seva_name,
+                seva_amount: item.amount,
+                quantity: 1,
+              });
+            },
+          },
 
 
-   
-          
- 
-           { name: "seva_name", label: "Seva Name", type: "text" },
-         
-         
+
+
+
+          { name: "seva_name", label: "Seva Name", type: "text" },
+
+
           { name: "deity_id", label: "Deity", type: "select", required: true, options: deities.map(d => ({ label: d.name, value: d.id })) },
-  
-            { name: "scheduled_date", label: "Date", type: "date" ,
-             min: new Date().toISOString().split("T")[0], // blocks past
-              onChange: handleDate
+
+          {
+            name: "scheduled_date", label: "Date", type: "date",
+            min: new Date().toISOString().split("T")[0], // blocks past
+            onChange: handleDate
           },
           { name: "scheduled_time", label: "Time", type: "time" },
-          { name: "seva_amount", label: "Amount", type: "number", required: true, placeholder:"Enter the amount for the seva. This can be auto-filled when a seva is selected from the search field above." },
-        
+          { name: "seva_amount", label: "Amount", type: "number", required: true, placeholder: "Enter the amount for the seva. This can be auto-filled when a seva is selected from the search field above." },
+
           { name: "payment_method_id", label: "Payment Method", type: "select", required: true, options: paymentMethods.map(p => ({ label: p.payment_method, value: p.id })) },
-           
-         
-     
-          { name: "devotee_email", label: "Devotee Email", type: "email",placeholder:"Enter devotee's email address" },
-          { name: "devotee_phone", label: "Devotee Phone", type: "text", placeholder:"Enter devotee's phone number" },
-           { name: "devotee_dob", label: "Date of Birth", type: "date" ,
-             max: new Date().toISOString().split("T")[0]  
+
+
+
+          { name: "devotee_email", label: "Devotee Email", type: "email", placeholder: "Enter devotee's email address" },
+          { name: "devotee_phone", label: "Devotee Phone", type: "text", placeholder: "Enter devotee's phone number" },
+          {
+            name: "devotee_dob", label: "Date of Birth", type: "date",
+            max: new Date().toISOString().split("T")[0]
           },
-           { name: "devotee_gender", label: "Gender", type: "select", options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }] },
- 
-          { name: "devotee_gotra", label: "Gotra", type: "text", placeholder:"Enter devotee's gotra" },
-          { name: "devotee_rashi", label: "Rashi", type: "text" ,placeholder:"Enter devotee's rashi" },
-          { name: "devotee_nakshatra", label: "Nakshatra", type: "text", placeholder:"Enter devotee's nakshatra" },
-           
- 
-        
-         
-         
-          { name: "quantity", label: "Quantity", type: "number", defaultValue: 1 ,placeholder:"Enter the quantity for the seva. This can be auto-filled with a default value of 1 when a seva is selected from the search field above." },
-          
-         
-          
-          { name: "remark", label: "Remark", type: "textarea" ,colSpan: 4, placeholder:"Any special instructions or notes related to the seva booking can be added here. This will be visible to both the temple staff and the devotee."},
-          { name: "internal_note", label: "Internal Note", type: "textarea",colSpan:4 ,placeholder:"Notes for internal use only. This will not be visible to the devotee but can help temple staff with additional information about the booking."},
+          { name: "devotee_gender", label: "Gender", type: "select", options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }] },
+
+          { name: "devotee_gotra", label: "Gotra", type: "text", placeholder: "Enter devotee's gotra" },
+          { name: "devotee_rashi", label: "Rashi", type: "text", placeholder: "Enter devotee's rashi" },
+          { name: "devotee_nakshatra", label: "Nakshatra", type: "text", placeholder: "Enter devotee's nakshatra" },
+
+
+
+
+
+          { name: "quantity", label: "Quantity", type: "number", defaultValue: 1, placeholder: "Enter the quantity for the seva. This can be auto-filled with a default value of 1 when a seva is selected from the search field above." },
+
+
+
+          { name: "remark", label: "Remark", type: "textarea", colSpan: 4, placeholder: "Any special instructions or notes related to the seva booking can be added here. This will be visible to both the temple staff and the devotee." },
+          { name: "internal_note", label: "Internal Note", type: "textarea", colSpan: 4, placeholder: "Notes for internal use only. This will not be visible to the devotee but can help temple staff with additional information about the booking." },
 
 
 
           {
-  name: "calendar_type",
-  label: "Calendar Type",
-  type: "select",
-  options: calendarTypeOptions,
-},
+            name: "calendar_type",
+            label: "Calendar Type",
+            type: "select",
+            options: calendarTypeOptions,
+          },
 
-// 🔁 Recurring
-{
-  name: "is_recurring",
-  label: "Recurring?",
-  type: "select",
-  options: [
-    { label: "Yes", value: "yes" },
-    { label: "No", value: "no" }
-  ],
-},
+          // 🔁 Recurring
+          {
+            name: "is_recurring",
+            label: "Recurring?",
+            type: "select",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ],
+          },
 
-{
-  name: "recurring_interval",
-  label: "Recurring Interval",
-  type: "select",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Monthly", value: "monthly" },
-    { label: "Yearly", value: "yearly" }
-  ],
-  showWhen: (formState: any) => formState.is_recurring === "yes"
-},
+          {
+            name: "recurring_interval",
+            label: "Recurring Interval",
+            type: "select",
+            options: [
+              { label: "Daily", value: "daily" },
+              { label: "Weekly", value: "weekly" },
+              { label: "Monthly", value: "monthly" },
+              { label: "Yearly", value: "yearly" }
+            ],
+            showWhen: (formState: any) => formState.is_recurring === "yes"
+          },
 
-{
-  name: "recurring_count",
-  label: "Recurring Count",
-  type: "number",
-  showWhen: (formState: any) => formState.is_recurring === "yes"
-},
+          {
+            name: "recurring_count",
+            label: "Recurring Count",
+            type: "number",
+            showWhen: (formState: any) => formState.is_recurring === "yes"
+          },
 
-// 🕉 Hindu Fields
-
-  
- {name: "hindu_paksha", label: "Hindu Paksha", type: "text",   placeholder:"Enter the Hindu tithi for the scheduled date, if applicable" },
-
- {name: "hindu_tithi", label: "Hindu Tithi", type: "text",   placeholder:"Enter the Hindu tithi for the scheduled date, if applicable" },
-   
-
-{name: "hindu_month", label: "Hindu Month", type: "text", placeholder:"Enter the Hindu month for the scheduled date, if applicable" },
+          // 🕉 Hindu Fields
 
 
- {name: "hindu_samvat", label: "Hindu Samvatsara", type: "text",placeholder:"Enter the Hindu samvat year for the scheduled date, if applicable" },
+          { name: "hindu_paksha", label: "Hindu Paksha", type: "text", placeholder: "Enter the Hindu tithi for the scheduled date, if applicable" },
 
-{
-  name: "hindu_shaka_year",
-  label: "Hindu Shaka Year",
-  type: "number",
-  placeholder:"Auto disply the year",
-  showWhen: (formState: any) => formState.calendar_type === "hindu"
-},
+          { name: "hindu_tithi", label: "Hindu Tithi", type: "text", placeholder: "Enter the Hindu tithi for the scheduled date, if applicable" },
 
 
-{name: "hindu_nakshatra", label: "Hindu Nakshatra", type: "text" ,placeholder:"Enter the Hindu nakshatra for the scheduled date, if applicable" },
-        
+          { name: "hindu_month", label: "Hindu Month", type: "text", placeholder: "Enter the Hindu month for the scheduled date, if applicable" },
+
+
+          { name: "hindu_samvat", label: "Hindu Samvatsara", type: "text", placeholder: "Enter the Hindu samvat year for the scheduled date, if applicable" },
+
+          {
+            name: "hindu_shaka_year",
+            label: "Hindu Shaka Year",
+            type: "number",
+            placeholder: "Auto disply the year",
+            showWhen: (formState: any) => formState.calendar_type === "hindu"
+          },
+
+
+          { name: "hindu_nakshatra", label: "Hindu Nakshatra", type: "text", placeholder: "Enter the Hindu nakshatra for the scheduled date, if applicable" },
+
         ]}
       />
 

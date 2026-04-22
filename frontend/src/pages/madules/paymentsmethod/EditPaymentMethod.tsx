@@ -46,7 +46,7 @@ export default function EditPaymentMethod() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `http://localhost:5000/api/v1/temple/payment-methods/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/payment-methods/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -81,7 +81,7 @@ export default function EditPaymentMethod() {
       const token = secureStorage.getItem("token")
 
       await axios.put(
-        `http://localhost:5000/api/v1/temple/payment-methods/${id}`,
+        `https://tmscmt.netlify.app/api/v1/temple/payment-methods/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -133,9 +133,9 @@ export default function EditPaymentMethod() {
             name: "payment_method",
             label: "Payment Method",
             required: true,
-            placeholder : "Enter the name of the payment method"
+            placeholder: "Enter the name of the payment method"
           },
-            {
+          {
             name: "display_order",
             label: "Display Order",
             type: "number",
@@ -171,7 +171,7 @@ export default function EditPaymentMethod() {
               { label: "Cancelled", value: "cancelled" }
             ]
           },
-        
+
           {
             name: "remark",
             label: "Remark",

@@ -2,109 +2,39 @@ import { Request, Response } from "express";
 import db from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
-
 /**
  * GET ALL SEVA BOOKINGS
  */
 export const getSevaBookings = async (req: Request, res: Response) => {
-
   try {
-
     const organization_id = req.user!.organization_id;
     const temple_id = req.user!.temple_id;
 
     const [rows] = await db.query<RowDataPacket[]>(
-
       `SELECT *
        FROM seva_bookings
        WHERE organization_id = ?
        AND temple_id = ?
        AND deleted_at IS NULL
        ORDER BY created_at DESC`,
-
       [organization_id, temple_id]
-
     );
 
     res.json({
       success: true,
       data: rows
     });
-
-  }
-
-  catch (error: any) {
-
+  } catch (error: any) {
     res.status(500).json({
       success: false,
       message: error.message
     });
-
   }
-
 };
 
-
 /**
- * GET SINGLE BOOKING AND TEMPLE DETAIL ALONG WITH THIS  FOR RECIPT FUNCTION 
+ * GET SINGLE BOOKING AND TEMPLE DETAIL ALONG WITH THIS FOR RECIPT FUNCTION 
  */
-
-// export const getSevaBookingById = async (req: Request, res: Response) => {
-//   try {
-//     const organization_id = req.user!.organization_id;
-//     const temple_id = req.user!.temple_id;
-//     const { id } = req.params;
-
-//     const [rows] = await db.query<RowDataPacket[]>(
-//       `SELECT 
-//         sb.*,
-
-//         t.name AS temple_name,
-//         t.email AS temple_email,
-//         t.phone AS temple_phone,
-//         t.img_name AS temple_logo,
-
-//        CONCAT_WS(', ',
-//       t.address_line1,
-//       t.address_line2,
-//       t.city,
-//       t.state,
-//       t.country,
-//       t.pincode
-//     ) AS temple_address
-
-//    FROM seva_bookings sb
-
-//    LEFT JOIN temples t 
-//    ON sb.temple_id = t.id
-
-//    WHERE sb.id = ?
-//    AND sb.organization_id = ?
-//    AND sb.temple_id = ?
-//    AND sb.deleted_at IS NULL`,
-//   [id, organization_id, temple_id]
-// );
-
-//     if (rows.length === 0) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Booking not found",
-//       });
-//     }
-
-//     res.json({
-//       success: true,
-//       data: rows[0],
-//     });
-
-//   } catch (error: any) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
 export const getSevaBookingById = async (req: Request, res: Response) => {
   try {
     const organization_id = req.user!.organization_id;
@@ -171,11 +101,9 @@ export const getSevaBookingById = async (req: Request, res: Response) => {
 
 
 export const createSevaBooking = async (req: Request, res: Response) => {
-
   const connection = await db.getConnection();
 
   try {
-
     await connection.beginTransaction();
 
     const organization_id = req.user!.organization_id;
@@ -235,7 +163,6 @@ export const createSevaBooking = async (req: Request, res: Response) => {
 
     // 🔹 CASE 1: Devotee ID exists → check & update if changed
     if (finalDevoteeId) {
-
       const [rows]: any = await connection.query(
         `SELECT * FROM devotees
          WHERE id=? AND temple_id=? AND organization_id=?`,
@@ -243,7 +170,6 @@ export const createSevaBooking = async (req: Request, res: Response) => {
       );
 
       if (rows.length > 0) {
-
         const oldData = rows[0];
 
         const isChanged =
@@ -257,7 +183,6 @@ export const createSevaBooking = async (req: Request, res: Response) => {
           oldData.gender !== devotee_gender;
 
         if (isChanged) {
-
           await connection.query(
             `UPDATE devotees SET
               name=?,
@@ -318,7 +243,6 @@ export const createSevaBooking = async (req: Request, res: Response) => {
 
     //  CASE 2: No Devotee ID → find or create
     if (!finalDevoteeId && devotee_name && (devotee_phone || devotee_email)) {
-
       const [existing]: any = await connection.query(
         `SELECT * FROM devotees
          WHERE temple_id=? AND organization_id=?
@@ -328,11 +252,8 @@ export const createSevaBooking = async (req: Request, res: Response) => {
       );
 
       if (existing.length > 0) {
-
         finalDevoteeId = existing[0].id;
-
       } else {
-
         const [newDevotee] = await connection.query<ResultSetHeader>(
           `INSERT INTO devotees
            (organization_id, temple_id, name, phone, email,
@@ -394,8 +315,8 @@ export const createSevaBooking = async (req: Request, res: Response) => {
       paid_amount >= total_amount
         ? "paid"
         : paid_amount > 0
-        ? "partial"
-        : "pending";
+          ? "partial"
+          : "pending";
 
     const receipt_number = `RCPT-${Date.now()}`;
 
@@ -476,7 +397,6 @@ export const createSevaBooking = async (req: Request, res: Response) => {
     let currentDate = new Date(scheduled_date);
 
     for (let i = 1; i <= totalOccurrences; i++) {
-
       if (i > 1) {
         if (recurring_interval === "daily") currentDate.setDate(currentDate.getDate() + 1);
         if (recurring_interval === "weekly") currentDate.setDate(currentDate.getDate() + 7);
@@ -518,26 +438,21 @@ export const createSevaBooking = async (req: Request, res: Response) => {
     });
 
   } catch (error: any) {
-
     await connection.rollback();
 
     res.status(500).json({
       success: false,
       message: error.message
     });
-
   } finally {
     connection.release();
   }
 };
+
 /**
- * 
  * UPDATE BOOKING
  */
-
-
 export const updateSevaBooking = async (req: Request, res: Response) => {
-
   const connection = await db.getConnection();
 
   try {
@@ -732,81 +647,57 @@ export const updateSevaBooking = async (req: Request, res: Response) => {
  * DELETE BOOKING
  */
 export const deleteSevaBooking = async (req: Request, res: Response) => {
-
   try {
-
     const organization_id = req.user!.organization_id;
     const temple_id = req.user!.temple_id;
-
     const { id } = req.params;
 
-
     await db.query(
-
       `UPDATE seva_bookings
-
        SET deleted_at = NOW()
-
        WHERE id=?
        AND organization_id=?
        AND temple_id=?`,
-
       [id, organization_id, temple_id]
-
     );
 
-
     res.json({
-
       success: true,
       message: "Booking deleted successfully"
-
     });
 
-  }
-
-  catch (error: any) {
-
+  } catch (error: any) {
     res.status(500).json({
-
       success: false,
       message: error.message
-
     });
-
   }
-
 };
 
 /**
- * CANCLE BOOKING
+ * CANCEL BOOKING
  */
 export const cancelSevaBooking = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+    const { remark, scheduled_date } = req.body;
 
-    const { id } = req.params
-    const { remark, scheduled_date } = req.body
-    const user = req.user
+    // FIXED: Added non-null assertion (!) here to ensure TypeScript knows user exists
+    const user = req.user!;
 
-    let status = "cancelled"
+    let status = "cancelled";
 
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toISOString().split("T")[0];
 
     // If date changed
     if (scheduled_date) {
-
       if (scheduled_date < today) {
-        status = "completed"
+        status = "completed";
+      } else if (scheduled_date === today) {
+        status = "confirmed";
+      } else {
+        status = "booked";
       }
-
-      else if (scheduled_date === today) {
-        status = "confirmed"
-      }
-
-      else {
-        status = "booked"
-      }
-
     }
 
     let query = `
@@ -815,38 +706,36 @@ export const cancelSevaBooking = async (req: Request, res: Response) => {
         status = ?,
         remark = ?,
         updated_at = NOW()
-    `
+    `;
 
-    const params:any[] = [status, remark || ""]
+    const params: any[] = [status, remark || ""];
 
     if (scheduled_date) {
-      query += `, scheduled_date = ?`
-      params.push(scheduled_date)
+      query += `, scheduled_date = ?`;
+      params.push(scheduled_date);
     }
 
     query += `
       WHERE id = ?
       AND organization_id = ?
       AND temple_id = ?
-    `
+    `;
 
-    params.push(id, user.organization_id, user.temple_id)
+    // Now user.organization_id and user.temple_id will pass compilation
+    params.push(id, user.organization_id, user.temple_id);
 
-    await db.query(query, params)
+    await db.query(query, params);
 
     res.json({
       success: true,
       message: "Seva booking updated successfully",
       status
-    })
+    });
 
   } catch (error) {
-
-    console.error(error)
-
+    console.error(error);
     res.status(500).json({
       message: "Cancel failed"
-    })
-
+    });
   }
-}
+};

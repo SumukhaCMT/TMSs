@@ -17,6 +17,7 @@ import templeRoutes from "./routes/temple.routes"
 import tokensRoutes from "./routes/tokens.routes"
 import path from "path";
 import fs from "fs"
+
 // load panchanga names
 const namesPath = path.join(__dirname, "names.json");
 const names = JSON.parse(fs.readFileSync(namesPath, "utf8"));
@@ -25,52 +26,53 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // 🔥 ADD THIS (important)
 
 // Panchanga endpoint - this is a mock implementation. In a real application, you would calculate these values based on the date and location, or fetch them from an external API.
-app.get("/panchanga", (req,res)=>{
+app.get("/panchanga", (req, res) => {
 
- const {date} = req.query
+  const { date } = req.query
 
- if(!date){
-  return res.json({error:"Date required"})
- }
+  if (!date) {
+    return res.json({ error: "Date required" })
+  }
 
- const d = new Date(date)
+  // FIXED: Cast date as string to satisfy TypeScript compiler
+  const d = new Date(date as string)
 
- const day = d.getDate()
- const month = d.getMonth()+1
- const year = d.getFullYear()
+  const day = d.getDate()
+  const month = d.getMonth() + 1
+  const year = d.getFullYear()
 
- const weekday = d.getDay()
+  const weekday = d.getDay()
 
- const tithiIndex = (day % 30) || 30
- const nakIndex = (day % 27) || 27
-//  const rashiIndex = (month % 12) || 12
- const masaIndex = (month % 12) || 12
- const yogaIndex = (day % 27) || 27
- const karanaIndex = (day % 60) || 60
- const samvatsIndex = ((d.getFullYear()+57) % 60) || 60
-// paksha
+  const tithiIndex = (day % 30) || 30
+  const nakIndex = (day % 27) || 27
+  //  const rashiIndex = (month % 12) || 12
+  const masaIndex = (month % 12) || 12
+  const yogaIndex = (day % 27) || 27
+  const karanaIndex = (day % 60) || 60
+  const samvatsIndex = ((d.getFullYear() + 57) % 60) || 60
+  // paksha
   const pakshaKey = day <= 15 ? "shukla" : "krishna"
 
   // shaka year
   const shakaYear = year - 78
 
- res.json({
+  res.json({
 
-  tithi: names.tithis[tithiIndex],
-  nakshatra: names.nakshatras[nakIndex],
-//   rashi: names.rashis[rashiIndex],
-  masa: names.masas[masaIndex],
-  samvatsara: names.samvats[samvatsIndex],
-  yoga: names.yogas[yogaIndex],
-  karana: names.karanas[karanaIndex],
-  vara: names.varas[weekday],
- 
+    tithi: names.tithis[tithiIndex],
+    nakshatra: names.nakshatras[nakIndex],
+    //   rashi: names.rashis[rashiIndex],
+    masa: names.masas[masaIndex],
+    samvatsara: names.samvats[samvatsIndex],
+    yoga: names.yogas[yogaIndex],
+    karana: names.karanas[karanaIndex],
+    vara: names.varas[weekday],
+
     paksha: names.pakshas[pakshaKey],
 
     hindu_shaka_year: shakaYear
-  
 
- })
+
+  })
 
 })
 

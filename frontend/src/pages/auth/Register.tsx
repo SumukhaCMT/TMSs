@@ -53,7 +53,7 @@ export default function OrganizationForm() {
 
     try {
       const res = await fetch(
-        "https://tmscmt.netlify.appapi/v1/organizations/register",
+        "https://tmscmt.netlify.app/api/v1/organizations/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

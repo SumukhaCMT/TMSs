@@ -71,7 +71,7 @@ const UNIT_OPTIONS: UnitOption[] = [
     { label: "Other (Custom)", value: "Other" },
 ];
 
-const STATIC_IMAGE_URL = "https://tmscmt.netlify.apppublic/hundi/";
+const STATIC_IMAGE_URL = "https://tmscmt.netlify.app/public/hundi/";
 
 function DeityMultiSelect({ items, selected, onChange, disabled }: { items: string[], selected: string[], onChange: (val: string[]) => void, disabled?: boolean }) {
     const anchor = useComboboxAnchor()

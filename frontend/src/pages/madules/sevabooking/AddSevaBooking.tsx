@@ -48,10 +48,10 @@ export default function AddSevaBooking() {
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [sevaRes, deityRes, devoteeRes, paymentRes] = await Promise.all([
-          axios.get("https://tmscmt.netlify.appapi/v1/temple/sevas", { headers }),
-          axios.get("https://tmscmt.netlify.appapi/v1/temple/deities", { headers }),
-          axios.get("https://tmscmt.netlify.appapi/v1/temple/devotees", { headers }),
-          axios.get("https://tmscmt.netlify.appapi/v1/temple/payment-methods", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/sevas", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/deities", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/devotees", { headers }),
+          axios.get("https://tmscmt.netlify.app/api/v1/temple/payment-methods", { headers }),
         ]);
 
         setSevas(sevaRes.data.data);
@@ -123,7 +123,7 @@ export default function AddSevaBooking() {
         internal_note: formData.internal_note || null,
       };
 
-      await axios.post("https://tmscmt.netlify.appapi/v1/temple/seva-bookings", data, {
+      await axios.post("https://tmscmt.netlify.app/api/v1/temple/seva-bookings", data, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // console.log(data)
@@ -151,7 +151,7 @@ export default function AddSevaBooking() {
 
     try {
 
-      const res = await fetch(`https://tmscmt.netlify.apppanchanga?date=${value}`)
+      const res = await fetch(`https://tmscmt.netlify.app/panchanga?date=${value}`)
       const json = await res.json()
 
       // console.log("Panchanga:", json)
@@ -209,7 +209,7 @@ export default function AddSevaBooking() {
 
             onSearch: async (value: string) => {
               const res = await axios.get(
-                `https://tmscmt.netlify.appapi/v1/temple/devotees/search?q=${value}`,
+                `https://tmscmt.netlify.app/api/v1/temple/devotees/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               return res.data.data;
@@ -239,7 +239,7 @@ export default function AddSevaBooking() {
 
             onSearch: async (value: string) => {
               const res = await axios.get(
-                `https://tmscmt.netlify.appapi/v1/temple/sevas/search?q=${value}`,
+                `https://tmscmt.netlify.app/api/v1/temple/sevas/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
 

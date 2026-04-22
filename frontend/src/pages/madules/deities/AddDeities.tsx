@@ -54,7 +54,7 @@ export default function AddDeity() {
       }
 
       await axios.post(
-        "https://tmscmt.netlify.appapi/v1/temple/deities",
+        "https://tmscmt.netlify.app/api/v1/temple/deities",
         formData,
         {
           headers: {

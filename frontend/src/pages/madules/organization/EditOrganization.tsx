@@ -53,7 +53,7 @@ export default function EditOrganization() {
 
         const res = await fetch(
 
-          `https://tmscmt.netlify.appapi/v1/organizations/register/${id}`,
+          `https://tmscmt.netlify.app/api/v1/organizations/register/${id}`,
 
           {
 
@@ -164,7 +164,7 @@ export default function EditOrganization() {
 
       const res = await fetch(
 
-        `https://tmscmt.netlify.appapi/v1/organizations/register/${id}`,
+        `https://tmscmt.netlify.app/api/v1/organizations/register/${id}`,
 
         {
 

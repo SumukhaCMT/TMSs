@@ -80,7 +80,7 @@ export default function OrganizationsTable() {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this organization?")) return
 
-    await fetch(`https://tmscmt.netlify.appapi/v1/organizations/register/${id}`, {
+    await fetch(`https://tmscmt.netlify.app/api/v1/organizations/register/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

@@ -21,59 +21,53 @@ import fs from "fs"
 // load panchanga names
 const namesPath = path.join(__dirname, "names.json");
 const names = JSON.parse(fs.readFileSync(namesPath, "utf8"));
-app.use(cors());
+
+// ✅ UPDATED CORS CONFIGURATION
+app.use(cors({
+  origin: [
+    "https://tmscmt.netlify.app",
+    "http://localhost:5173"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // 🔥 ADD THIS (important)
+app.use(express.urlencoded({ extended: true }));
 
-// Panchanga endpoint - this is a mock implementation. In a real application, you would calculate these values based on the date and location, or fetch them from an external API.
+// ... (rest of your panchanga endpoint code remains the same) ...
+
 app.get("/panchanga", (req, res) => {
-
   const { date } = req.query
-
   if (!date) {
     return res.json({ error: "Date required" })
   }
-
-  // FIXED: Cast date as string to satisfy TypeScript compiler
   const d = new Date(date as string)
-
   const day = d.getDate()
   const month = d.getMonth() + 1
   const year = d.getFullYear()
-
   const weekday = d.getDay()
-
   const tithiIndex = (day % 30) || 30
   const nakIndex = (day % 27) || 27
-  //  const rashiIndex = (month % 12) || 12
   const masaIndex = (month % 12) || 12
   const yogaIndex = (day % 27) || 27
   const karanaIndex = (day % 60) || 60
   const samvatsIndex = ((d.getFullYear() + 57) % 60) || 60
-  // paksha
   const pakshaKey = day <= 15 ? "shukla" : "krishna"
-
-  // shaka year
   const shakaYear = year - 78
 
   res.json({
-
     tithi: names.tithis[tithiIndex],
     nakshatra: names.nakshatras[nakIndex],
-    //   rashi: names.rashis[rashiIndex],
     masa: names.masas[masaIndex],
     samvatsara: names.samvats[samvatsIndex],
     yoga: names.yogas[yogaIndex],
     karana: names.karanas[karanaIndex],
     vara: names.varas[weekday],
-
     paksha: names.pakshas[pakshaKey],
-
     hindu_shaka_year: shakaYear
-
-
   })
-
 })
 
 app.use('/api/auth', authRoutes);
@@ -82,14 +76,11 @@ app.use('/api/v1/temple/sevas', sevasRoutes);
 app.use('/api/v1/temple/devotees', devoteesRoutes);
 app.use('/api/v1/temple/deities', deitiesRoutes);
 app.use('/api/v1/temple/payment-methods', paymentMethodRoutes);
-
 app.use("/api/v1/temple/seva-bookings", sevabookingRoutes);
-
-
 app.use('/api/v1/temple/trustees', trusteesRoutes);
 app.use('/api/v1/hundi', hundiRoutes);
 app.use("/api/v1/temple/temples", templeRoutes);
 app.use("/api/v1/temple/tokens", tokensRoutes);
-// app.use("/api/v1/temples", templeRoutes)
 app.use('/public', express.static(path.join(__dirname, 'public')));
+
 export default app;

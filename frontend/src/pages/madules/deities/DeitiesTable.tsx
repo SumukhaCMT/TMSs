@@ -50,7 +50,7 @@
 //       const token = secureStorage.getItem("token")
 
 //       const response = await axios.get(
-//         "https://tmscmt.netlify.app/api/v1/temple/deities",
+//         "https://tms-backend-x26c.onrender.com/api/v1/temple/deities",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@
 //       const token = secureStorage.getItem("token")
 
 //       await axios.delete(
-//         `https://tmscmt.netlify.app/api/v1/temple/deities/${selectedRow.id}`,
+//         `https://tms-backend-x26c.onrender.com/api/v1/temple/deities/${selectedRow.id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,

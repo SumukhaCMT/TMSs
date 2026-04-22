@@ -31,7 +31,7 @@
 //       const token = secureStorage.getItem("token");
 
 //       const res = await axios.get(
-//         `https://tmscmt.netlify.app/api/v1/temple/seva-bookings/${id}`,
+//         `https://tms-backend-x26c.onrender.com/api/v1/temple/seva-bookings/${id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -90,7 +90,7 @@
 //               height: 350px;
 //   background: url('${
 //   data?.temple_logo
-//     ? `https://tmscmt.netlify.app/public/temple/${data.temple_logo}`
+//     ? `https://tms-backend-x26c.onrender.com/public/temple/${data.temple_logo}`
 //     : ""
 // }') no-repeat center/contain;
 //               opacity: 0.06;
@@ -216,7 +216,7 @@
 //                 <img
 //                     src={
 //                       data?.temple_logo
-//                         ? `https://tmscmt.netlify.app/public/temple/${data.temple_logo}`
+//                         ? `https://tms-backend-x26c.onrender.com/public/temple/${data.temple_logo}`
 //                         : image
 //                     }
 //                     alt="logo"
@@ -242,7 +242,7 @@
 //                    <img
 //                     src={
 //                       data?.deity_image
-//                         ? `https://tmscmt.netlify.app/public/deities/${data.deity_image}`
+//                         ? `https://tms-backend-x26c.onrender.com/public/deities/${data.deity_image}`
 //                         : ""
 //                     }
 //                     alt="logo"

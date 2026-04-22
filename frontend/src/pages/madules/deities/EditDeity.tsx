@@ -28,13 +28,13 @@ export default function EditDeity() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [dialogMessage, setDialogMessage] = useState("")
 
-  // const IMAGE_URL = "https://tmscmt.netlify.app/public/deities/"; 
+  // const IMAGE_URL = "https://tms-backend-x26c.onrender.com/public/deities/"; 
   // ================= FETCH =================
   useEffect(() => {
     const fetchDeity = async () => {
       try {
         const res = await fetch(
-          "https://tmscmt.netlify.app/api/v1/temple/deities",
+          "https://tms-backend-x26c.onrender.com/api/v1/temple/deities",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -128,7 +128,7 @@ export default function EditDeity() {
       }
 
       const res = await fetch(
-        `https://tmscmt.netlify.app/api/v1/temple/deities/${id}`,
+        `https://tms-backend-x26c.onrender.com/api/v1/temple/deities/${id}`,
         {
           method: "PUT",
           headers: {

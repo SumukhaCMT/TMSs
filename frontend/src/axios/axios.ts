@@ -5,7 +5,7 @@
 
 
 // const api = axios.create({
-//   baseURL: "https://tmscmt.netlify.app/api",
+//   baseURL: "https://tms-backend-x26c.onrender.com/api",
 //   headers: {
 //     "Content-Type": "application/json",
 //   },
@@ -26,7 +26,7 @@ import axios from "axios";
 import { secureStorage } from "@/utils/secureStorage";
 
 // ✅ Base URLs
-export const BASE_URL = "https://tmscmt.netlify.app/";
+export const BASE_URL = "https://tms-backend-x26c.onrender.com";
 
 export const API_URL = `${BASE_URL}/api`;
 

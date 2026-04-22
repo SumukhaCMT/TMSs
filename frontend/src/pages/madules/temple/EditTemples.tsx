@@ -17,7 +17,7 @@ export default function EditSeva() {
 
   const [error, setError] = useState("")
   const [errors, setErrors] = useState<Record<string, string>>({})
-  //  const IMAGE_URL = "https://tmscmt.netlify.app/public/temple/"; 
+  //  const IMAGE_URL = "https://tms-backend-x26c.onrender.com/public/temple/"; 
 
   // ✅ NEW: location state
   const [location, setLocation] = useState({
@@ -36,7 +36,7 @@ export default function EditSeva() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `https://tmscmt.netlify.app/api/v1/temple/temples/${id}`,
+        `https://tms-backend-x26c.onrender.com/api/v1/temple/temples/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export default function EditSeva() {
       //  DON'T set Content-Type manually
       // =====================================
       await axios.put(
-        `https://tmscmt.netlify.app/api/v1/temple/temples/${id}`,
+        `https://tms-backend-x26c.onrender.com/api/v1/temple/temples/${id}`,
         payload,
         {
           headers: {

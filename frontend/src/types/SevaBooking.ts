@@ -1,7 +1,7 @@
 export interface SevaBooking {
   seva_id: number               // FK to Sevas table
-  deity_id?: number             
-  devotee_id?: number           
+  deity_id?: number
+  devotee_id?: number
   devotee_name?: string
   devotee_phone?: string
   devotee_email?: string
@@ -10,7 +10,7 @@ export interface SevaBooking {
   devotee_nakshatra?: string
   devotee_dob?: string
   devotee_gender?: "male" | "female" | "other"
-  
+
   seva_name: string             // required
   seva_amount: number           // required
   quantity: number              // default 1
@@ -39,14 +39,6 @@ export interface SevaBooking {
   updated_at?: string
   deleted_at?: string | null
   value: string              // for form field value
-  required?: boolean   
-<<<<<<< HEAD
-      
-=======
-<<<<<<< HEAD
-       // ⭐ show star on form
-=======
-      
->>>>>>> 919ca40bfeb5236a9f9543c63ce106d24080cb0b
->>>>>>> feature/login-reset
+  required?: boolean
+
 }

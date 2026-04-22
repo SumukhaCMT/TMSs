@@ -34,7 +34,7 @@ export default function EditDevotee() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        "https://tmscmt.netlify.app/api/v1/temple/devotees",
+        "https://tmscmt.netlify.appapi/v1/temple/devotees",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ export default function EditDevotee() {
     try {
       //  Fetch all devotees to check duplicate
       const res = await axios.get(
-        "https://tmscmt.netlify.app/api/v1/temple/devotees",
+        "https://tmscmt.netlify.appapi/v1/temple/devotees",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ export default function EditDevotee() {
 
       //  Update
       await axios.put(
-        `https://tmscmt.netlify.app/api/v1/temple/devotees/${id}`,
+        `https://tmscmt.netlify.appapi/v1/temple/devotees/${id}`,
         formData,
         {
           headers: {

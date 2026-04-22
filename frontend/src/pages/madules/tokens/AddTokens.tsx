@@ -30,8 +30,8 @@ export default function AddTokens() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const [sevaRes, deityRes] = await Promise.all([
-          axios.get("https://tmscmt.netlify.app/api/v1/temple/sevas", { headers }),
-          axios.get("https://tmscmt.netlify.app/api/v1/temple/deities", { headers }),
+          axios.get("https://tmscmt.netlify.appapi/v1/temple/sevas", { headers }),
+          axios.get("https://tmscmt.netlify.appapi/v1/temple/deities", { headers }),
         ])
 
         // If you need sevas later, keep it. Otherwise remove.
@@ -111,7 +111,7 @@ export default function AddTokens() {
 
             onSearch: async (value: string) => {
               const res = await axios.get(
-                `https://tmscmt.netlify.app/api/v1/temple/sevas/search?q=${value}`,
+                `https://tmscmt.netlify.appapi/v1/temple/sevas/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               )
 

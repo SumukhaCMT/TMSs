@@ -56,7 +56,7 @@ export default function EditSevaBooking() {
 
       const res = await axios.get(
 
-        `https://tmscmt.netlify.app/api/v1/temple/seva-bookings/${id}`,
+        `https://tmscmt.netlify.appapi/v1/temple/seva-bookings/${id}`,
 
         {
           headers: {
@@ -106,7 +106,7 @@ export default function EditSevaBooking() {
 
       await axios.put(
 
-        `https://tmscmt.netlify.app/api/v1/temple/seva-bookings/${id}`,
+        `https://tmscmt.netlify.appapi/v1/temple/seva-bookings/${id}`,
 
         formData,
 

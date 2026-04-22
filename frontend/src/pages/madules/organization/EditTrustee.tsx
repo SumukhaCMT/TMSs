@@ -46,7 +46,7 @@ export default function EditTrustee() {
       const token = secureStorage.getItem("token")
 
       const res = await axios.get(
-        `https://tmscmt.netlify.app/api/v1/temple/trustees/${id}`,
+        `https://tmscmt.netlify.appapi/v1/temple/trustees/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -81,7 +81,7 @@ export default function EditTrustee() {
       const token = secureStorage.getItem("token")
 
       await axios.put(
-        `https://tmscmt.netlify.app/api/v1/temple/trustees/${id}`,
+        `https://tmscmt.netlify.appapi/v1/temple/trustees/${id}`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },

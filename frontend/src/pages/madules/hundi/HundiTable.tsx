@@ -63,7 +63,7 @@ interface TableColumn {
   render: (row: Hundi) => React.ReactNode;
 }
 
-const STATIC_IMAGE_URL = "https://tmscmt.netlify.app/public/hundi/";
+const STATIC_IMAGE_URL = "https://tmscmt.netlify.apppublic/hundi/";
 
 export default function HundiTable() {
   const navigate = useNavigate()

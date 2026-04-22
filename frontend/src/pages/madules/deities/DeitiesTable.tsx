@@ -50,7 +50,7 @@
 //       const token = secureStorage.getItem("token")
 
 //       const response = await axios.get(
-//         "https://tmscmt.netlify.app/api/v1/temple/deities",
+//         "https://tmscmt.netlify.appapi/v1/temple/deities",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@
 //       const token = secureStorage.getItem("token")
 
 //       await axios.delete(
-//         `https://tmscmt.netlify.app/api/v1/temple/deities/${selectedRow.id}`,
+//         `https://tmscmt.netlify.appapi/v1/temple/deities/${selectedRow.id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -339,8 +339,8 @@ export default function DeitiesTable() {
             render: (d) => (
               <span
                 className={`rounded px-2 py-1 text-xs ${d.status === "active"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
                   }`}
               >
                 {d.status}

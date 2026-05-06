@@ -40,13 +40,4 @@ export interface SevaBooking {
   deleted_at?: string | null
   value: string              // for form field value
   required?: boolean   
-<<<<<<< HEAD
-      
-=======
-<<<<<<< HEAD
-       // ⭐ show star on form
-=======
-      
->>>>>>> 919ca40bfeb5236a9f9543c63ce106d24080cb0b
->>>>>>> feature/login-reset
 }

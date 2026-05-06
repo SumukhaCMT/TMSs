@@ -54,8 +54,10 @@ export default function AddSeva() {
       />
 
       <FormBuilder
+      
         title="Add Seva"
         submitLabel="Save"
+         backPath="/sevas"
         errors={errors}
         onSubmit={handleSubmit}
         defaultValues={{
@@ -67,12 +69,14 @@ export default function AddSeva() {
         fields={[
           { name: "seva_name", label: "Seva Name", placeholder: "Enter Seva Name", required: true },
           { name: "amount", label: "Amount", type: "number", required: true, placeholder: "Enter the amount for the seva" },
-          { name: "display_order", label: "Display Order", type: "number", required: true },
+          { name: "display_order", label: "Display Order", type: "number", required: true, placeholder: "Enter the display order (numeric value)"   },
           { name: "recurring_count", label: "Count", type: "number", placeholder: "Enter recurring count" },
           {
             name: "is_default",
             label: "Default",
-            type: "select",
+            // type: "select",
+             type: "search-select",
+              placeholder: "Is this the default seva?",
             required: true,
             options: [
               { label: "Yes", value: "yes" },
@@ -82,7 +86,9 @@ export default function AddSeva() {
           {
             name: "is_recurring",
             label: "Recurring",
-            type: "select",
+            // type: "select",
+             type: "search-select",
+              placeholder: "Is this a recurring seva?",
             required: true,
             options: [
               { label: "Yes", value: "yes" },
@@ -92,7 +98,8 @@ export default function AddSeva() {
           {
             name: "recurring_interval",
             label: "Interval",
-            type: "select",
+            type: "search-select",
+              placeholder: "Select the recurring interval",
             options: [
               { label: "Daily", value: "daily" },
               { label: "Weekly", value: "weekly" },

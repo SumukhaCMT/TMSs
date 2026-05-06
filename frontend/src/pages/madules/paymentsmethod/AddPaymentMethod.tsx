@@ -57,8 +57,8 @@ export default function AddPaymentMethod() {
         fields={[
           { name: "payment_method", label: "Payment Method", required: true, placeholder: "Enter the name of the payment method" },
           { name: "display_order", label: "Display Order", type: "number", required: true, placeholder: "Enter the display order (numeric value)" },
-          { name: "payment_method_type", label: "Payment Method Type", type: "select", required: true, options: [{ label: "Online", value: "online" }, { label: "Offline", value: "offline" }] },
-          { name: "is_default", label: "Default", type: "select", required: true, options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }] },
+          { name: "payment_method_type", label: "Payment Method Type", type: "search-select", required: true, options: [{ label: "Online", value: "online" }, { label: "Offline", value: "offline" }] },
+          { name: "is_default", label: "Default", type: "search-select", required: true, options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }] },
           { name: "remarks", label: "Remarks", type: "textarea", colSpan: 4, placeholder: "Additional notes about the payment method" },
         ]}
       />

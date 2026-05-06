@@ -16,11 +16,18 @@ export interface User {
   org_id?: number;
   organization_id?: number;
   temple_id?: number;
+  
   Role?: string;
   role_id?: number;
   number_of_users?: number;
   org_ids?: number[];
   number_of_organisations?: number;
+   temple?: {
+    id: number;
+    name: string;
+    lat: number;
+    lng: number;
+  };
   permissions: Record<string, number>;
 }
 
@@ -42,6 +49,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => secureStorage.getItem("user"));
   const [token, setToken] = useState<string | null>(() => secureStorage.getItem("token"));
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // =========================================================
+  // ✅ FETCH TEMPLE DATA
+  // =========================================================
+  const fetchTemple = async (token: string) => {
+    try {
+      const res = await api.get("/v1/temple/temples", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const temple =
+        res.data.data.find((t: any) => t.is_primary === 1) ||
+        res.data.data[0];
+
+      return temple || null;
+    } catch (err) {
+      console.error("Temple fetch failed", err);
+      return null;
+    }
+  };
 
 const logout = useCallback(async () => {
   if (timerRef.current) clearTimeout(timerRef.current);
@@ -127,14 +153,47 @@ useEffect(() => {
   };
 }, [token, user, logout, startTimer]);
 
-  const login = (userData: User, newToken: string, newRefreshToken: string) => {
-    setUser(userData);
-    setToken(newToken);
-    secureStorage.setItem("user", userData);
-    secureStorage.setItem("token", newToken);
-    secureStorage.setItem("refresh_token", newRefreshToken);
-    startTimer();
-  };
+  // const login = (userData: User, newToken: string, newRefreshToken: string) => {
+  //   setUser(userData);
+  //   setToken(newToken);
+  //   secureStorage.setItem("user", userData);
+  //   secureStorage.setItem("token", newToken);
+  //   secureStorage.setItem("refresh_token", newRefreshToken);
+  //   startTimer();
+  // };
+  const login = async (userData: User, newToken: string, newRefreshToken: string) => {
+  let updatedUser = { ...userData };
+
+  // ✅ attach temple (THIS IS THE FIX)
+  try {
+    const temple = await fetchTemple(newToken);
+
+    if (temple) {
+      updatedUser = {
+        ...updatedUser,
+        temple_id: temple.id,
+        temple: {
+          id: temple.id,
+          name: temple.name,
+          lat: Number(temple.lat),
+          lng: Number(temple.lng),
+        },
+      };
+    }
+  } catch (err) {
+    console.error("Temple attach failed", err);
+  }
+
+  // ✅ keep your original logic
+  setUser(updatedUser);
+  setToken(newToken);
+
+  secureStorage.setItem("user", updatedUser);
+  secureStorage.setItem("token", newToken);
+  secureStorage.setItem("refresh_token", newRefreshToken);
+
+  startTimer();
+};
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout }}>

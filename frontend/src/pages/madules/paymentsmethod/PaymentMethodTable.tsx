@@ -77,7 +77,7 @@ export default function PaymentMethodTable() {
         items={[
           { label: "Dashboard", to: "/dashboard" },
           { label: "Payment Methods List" },
-          { label: "Add Payment Method", to: "/payment-methods/add" },
+          // { label: "Add Payment Method", to: "/payment-methods/add" },
         ]}
       />
 
@@ -85,6 +85,8 @@ export default function PaymentMethodTable() {
         title="Payment Methods"
         data={data}
         loading={loading}
+          addLabel="Add Payment Method"
+        
         onAdd={() => navigate("/payment-methods/add")}
         onEdit={(row) => navigate(`/payment-methods/${row.id}/edit`)}
         onDelete={handleDeleteClick}

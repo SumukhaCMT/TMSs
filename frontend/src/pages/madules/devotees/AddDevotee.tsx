@@ -99,7 +99,7 @@ export default function AddDevotee() {
           {
             name: "gender",
             label: "Gender",
-            type: "select",
+            type: "search-select",
             required: true,
             options: [
               { label: "Male", value: "male" },
@@ -116,8 +116,9 @@ export default function AddDevotee() {
           {
             name: "gotra",
             label: "Gotra",
-            type: "select",
+            type: "search-select",
             required: true,
+            placeholder: "Select the gotra",
             options: [
                  { label: "Bharadwaj", value: "bharadwaj" },
                   { label: "Kashyapa", value: "kashyapa" },
@@ -140,29 +141,31 @@ export default function AddDevotee() {
           {
             name: "rashi",
             label: "Rashi",
-            type: "select",
+            type: "search-select",
+            placeholder: "Select the rashi",
             required: true,
             options: [
                  { label: "Mesha (Aries)", value: "mesha" },
-    { label: "Vrishabha (Taurus)", value: "vrishabha" },
-    { label: "Mithuna (Gemini)", value: "mithuna" },
-    { label: "Karka (Cancer)", value: "karka" },
-    { label: "Simha (Leo)", value: "simha" },
-    { label: "Kanya (Virgo)", value: "kanya" },
-    { label: "Tula (Libra)", value: "tula" },
-    { label: "Vrischika (Scorpio)", value: "vrischika" },
-    { label: "Dhanu (Sagittarius)", value: "dhanu" },
-    { label: "Makara (Capricorn)", value: "makara" },
-    { label: "Kumbha (Aquarius)", value: "kumbha" },
-    { label: "Meena (Pisces)", value: "meena" },
+                  { label: "Vrishabha (Taurus)", value: "vrishabha" },
+                  { label: "Mithuna (Gemini)", value: "mithuna" },
+                  { label: "Karka (Cancer)", value: "karka" },
+                  { label: "Simha (Leo)", value: "simha" },
+                  { label: "Kanya (Virgo)", value: "kanya" },
+                  { label: "Tula (Libra)", value: "tula" },
+                  { label: "Vrischika (Scorpio)", value: "vrischika" },
+                  { label: "Dhanu (Sagittarius)", value: "dhanu" },
+                  { label: "Makara (Capricorn)", value: "makara" },
+                  { label: "Kumbha (Aquarius)", value: "kumbha" },
+                  { label: "Meena (Pisces)", value: "meena" },
             ],
           },
 
           {
             name: "nakshatra",
             label: "Nakshatra",
-            type: "select",
+            type: "search-select",
             required: true,
+            placeholder: "Select the nakshatra",
             options: [
                   { label: "Ashwini", value: "ashwini" },
     { label: "Bharani", value: "bharani" },
@@ -198,36 +201,43 @@ export default function AddDevotee() {
             name: "address_line1",
             label: "Address Line 1",
             required: true,
+            placeholder: "Enter the first line of the address",
           },
           {
             name: "address_line2",
             label: "Address Line 2",
+            placeholder: "Enter the second line of the address (optional)",
           },
           {
             name: "city",
             label: "City",
             required: true,
+            placeholder: "Enter the city",
           },
           {
             name: "state",
             label: "State",
             required: true,
+            placeholder: "Enter the state",
           },
           {
             name: "country",
             label: "Country",
             required: true,
+            placeholder: "Enter the country",
           },
           {
             name: "pincode",
             label: "Pincode",
             required: true,
+            placeholder: "Enter the pincode",
           },
           {
             name: "remark",
             label: "Remark",
             type: "textarea",
             colSpan: 4,
+            placeholder: "Enter any additional remarks about the devotee",
           },
         ]}
       />

@@ -20,7 +20,7 @@ export default function ProtectedRoute({ requiredPermission, minLevel = 1 }: Pro
     return <Navigate to="/dashboard" replace />;
   }
 
-  if (user.user_type === 'super_admin') {
+  if (user.user_type === 'super_admin' || user.user_type === 'org_admin') {
     return (
       <RouteModuleContext.Provider value={requiredPermission ?? parentModule}>
         <Outlet />

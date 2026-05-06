@@ -1,6 +1,6 @@
 import FormBuilder from "@/components/common/FormBuilder"
 import AppBreadcrumb from "@/components/common/AppBreadcrumb"
-import axios from "axios"
+
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import LocationSearch from "@/components/common/LocationSearch"
@@ -35,8 +35,8 @@ export default function EditSeva() {
     try {
       const token = secureStorage.getItem("token")
 
-      const res = await axios.get(
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/temples/${id}`,
+      const res = await api.get(
+        `/v1/temple/temples/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -120,8 +120,8 @@ export default function EditSeva() {
       // =====================================
       //  DON'T set Content-Type manually
       // =====================================
-      await axios.put(
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/temples/${id}`,
+      await api.put(
+        `/v1/temple/temples/${id}`,
         payload,
         {
           headers: {

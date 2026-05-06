@@ -4,7 +4,7 @@ import AppBreadcrumb from "@/components/common/AppBreadcrumb"
 import DataTable from "@/components/common/DataTable"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
+// import type { SevaBooking } from "@/types/SevaBooking"
 import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import {
   fetchSevaBookings,
@@ -105,7 +105,7 @@ export default function SevaBookingTable() {
         items={[
           { label: "Dashboard", to: "/dashboard" },
           { label: "Seva Booking List" },
-          { label: "Add Seva Booking", to: "/seva-booking/add" },
+          // { label: "Add Seva Booking", to: "/seva-booking/add" },
         ]}
       />
     <DateSearch
@@ -130,6 +130,7 @@ export default function SevaBookingTable() {
         title="Seva Bookings"
         data={sevaBookings}
         loading={loading}
+        addLabel="Add Seva Booking"
         onAdd={() => navigate("/seva-booking/add")}
         onEdit={(row) => navigate(`/seva-booking/${row.id}/edit`)}
         onDelete={handleDeleteClick}

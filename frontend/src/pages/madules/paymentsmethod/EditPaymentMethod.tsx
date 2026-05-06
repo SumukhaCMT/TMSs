@@ -1,12 +1,11 @@
 
-
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 
 import FormBuilder from "@/components/common/FormBuilder"
 import AppBreadcrumb from "@/components/common/AppBreadcrumb"
-import axios from "axios"
-import { useNavigate, useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
 import { validatePaymentMethodForm } from "@/utils/validatePaymentMethodForm"
+import api from "@/axios/axios"
 
 import {
   Dialog,
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import { secureStorage } from "@/utils/secureStorage"
 
 export default function EditPaymentMethod() {
 
@@ -35,21 +33,14 @@ export default function EditPaymentMethod() {
   const [isSuccess, setIsSuccess] = useState(true)
 
   useEffect(() => {
-    if (id) {
-      fetchPaymentMethod()
-    }
+    if (id) fetchPaymentMethod()
   }, [id])
 
-  //  FETCH
+  // ================= FETCH =================
   const fetchPaymentMethod = async () => {
     try {
-      const token = secureStorage.getItem("token")
-
-      const res = await axios.get(
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/payment-methods/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const res = await api.get(
+        `/v1/temple/payment-methods/${id}`
       )
 
       setData(res.data.data)
@@ -63,13 +54,12 @@ export default function EditPaymentMethod() {
     }
   }
 
-  //  UPDATE
+  // ================= UPDATE =================
   const handleSubmit = async (formData: any) => {
 
     setErrors({})
     setError("")
 
-    //  VALIDATION
     const validationErrors = validatePaymentMethodForm(formData)
 
     if (Object.keys(validationErrors).length > 0) {
@@ -78,14 +68,9 @@ export default function EditPaymentMethod() {
     }
 
     try {
-      const token = secureStorage.getItem("token")
-
-      await axios.put(
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/payment-methods/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      await api.put(
+        `/v1/temple/payment-methods/${id}`,
+        formData
       )
 
       setIsSuccess(true)
@@ -97,7 +82,6 @@ export default function EditPaymentMethod() {
       let backendMessage =
         err.response?.data?.message || "Update failed"
 
-      //  Duplicate DB error handling
       if (backendMessage.includes("uk_temple_payment_method")) {
         backendMessage = "This Payment Method already exists."
       }
@@ -144,17 +128,19 @@ export default function EditPaymentMethod() {
           {
             name: "payment_method_type",
             label: "Payment Method Type",
-            type: "select",
+            type: "search-select",
             required: true,
+            placeholder: "Select the payment method type",
             options: [
-              { label: "online", value: "online" },
-              { label: "offline", value: "offline" }
+              { label: "Online", value: "online" },
+              { label: "Offline", value: "offline" }
+              
             ]
           },
           {
             name: "is_default",
             label: "Default",
-            type: "select",
+            type: "search-select",
             options: [
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
@@ -163,7 +149,8 @@ export default function EditPaymentMethod() {
           {
             name: "status",
             label: "Status",
-            type: "select",
+            type: "search-select",
+            placeholder: "Select the status",
             options: [
               { label: "Active", value: "active" },
               { label: "Inactive", value: "inactive" },
@@ -171,27 +158,22 @@ export default function EditPaymentMethod() {
               { label: "Cancelled", value: "cancelled" }
             ]
           },
-
           {
             name: "remark",
             label: "Remark",
             type: "textarea",
             colSpan: 4,
-            placeholder: "Additional notes about the payment method"
+            placeholder: "Enter any additional remarks about the payment method (optional)",
           }
         ]}
       />
 
-      {/*  STATUS POPUP */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle
-              className={
-                isSuccess ? "text-green-600" : "text-red-600"
-              }
+              className={isSuccess ? "text-green-600" : "text-red-600"}
             >
-              {isSuccess ? " " : " "}
               {dialogMessage}
             </DialogTitle>
           </DialogHeader>

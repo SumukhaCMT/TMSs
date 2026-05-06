@@ -1,15 +1,15 @@
 
 
-import { useState } from "react"
+import { useState,useEffect  } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-
+import { useNavigate } from "react-router-dom"
 import {
      UploadCloud, 
-    Calculator, Calendar as CalendarIcon,  Image as ImageIcon
+    Calculator, Calendar as CalendarIcon,  Image as ImageIcon, ChevronDown,X
 } from "lucide-react"
 
 import {
@@ -23,7 +23,7 @@ import {
 export type Field = {
   name: string
   label: string
-  type?: "text" | "email" | "number" | "select" | "textarea" | "image" | "date" | "time" | "search" | "hidden" | "max" | "min" | "url"
+  type?: "text" | "email" | "number" | "select" | "textarea" | "image" | "date" | "time" | "search" | "hidden" | "max" | "min" | "url" | "search-select" |"checkbox"
   placeholder?: string
   colSpan?: number
   options?: { label: string; value: string }[]
@@ -42,6 +42,8 @@ type FormBuilderProps = {
   title: string
   fields: Field[]
   submitLabel?: string
+  backLabel?: string
+   backPath?: string ,
   defaultValues?: Record<string, any>
   errors?: Record<string, string>
   onSubmit: (data: Record<string, any>) => void
@@ -51,15 +53,18 @@ export default function FormBuilder({
   title,
   fields,
   submitLabel = "Submit",
+  backLabel = "Back",
+    backPath,
   defaultValues = {},
   errors = {},
   onSubmit,
 }: FormBuilderProps) {
 
   const [formState, setFormState] = useState(defaultValues)
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  // const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<Record<string, any[]>>({})
   const [activeSearchField, setActiveSearchField] = useState<string | null>(null)
-
+const navigate = useNavigate()
   // INPUT CHANGE
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -86,7 +91,17 @@ export default function FormBuilder({
       [name]: value,
     })
   }
+useEffect(() => {
+  const handleClickOutside = () => {
+    setActiveSearchField(null)
+  }
 
+  document.addEventListener("click", handleClickOutside)
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside)
+  }
+}, [])
   return (
     <div className="w-full rounded-2xl border bg-white p-8 shadow-sm">
       <h2 className="mb-6 text-xl font-semibold">{title}</h2>
@@ -217,6 +232,105 @@ export default function FormBuilder({
                   ))}
                 </SelectContent>
               </Select>
+            )}
+            {field.type === "search-select" && (
+              <div
+                className="relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* INPUT */}
+                <Input
+                  value={formState[field.name] || ""}
+                  placeholder={field.placeholder}
+                  className="pr-10 cursor-pointer
+                  h-10
+                rounded-lg
+                border-gray-300
+                focus:border-primary
+                focus:ring-2
+                focus:ring-primary/20
+                transition-all
+                duration-200
+                  
+                  "
+                  onChange={(e) => {
+                    const value = e.target.value
+
+                    setFormState({ ...formState, [field.name]: value })
+                    setActiveSearchField(field.name)
+
+                    const filtered = field.options?.filter(opt =>
+                      opt.label.toLowerCase().includes(value.toLowerCase())
+                    ) || []
+
+                    setSearchResults(prev => ({
+                      ...prev,
+                      [field.name]: filtered
+                    }))
+                  }}
+                  onClick={() => {
+                    setActiveSearchField(field.name)
+
+                    setSearchResults(prev => ({
+                      ...prev,
+                      [field.name]: field.options || []
+                    }))
+                  }}
+                
+              
+                />
+                {/* ❌ CLEAR BUTTON */}
+                    {formState[field.name] && (
+                      <X
+                        className="absolute right-8 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 cursor-pointer"
+                        onClick={() => {
+                          setFormState({
+                            ...formState,
+                            [field.name]: "",
+                            [`${field.name}_id`]: null
+                          })
+
+                          setSearchResults(prev => ({
+                            ...prev,
+                            [field.name]: []
+                          }))
+
+                          setActiveSearchField(null)
+                        }}
+                      />
+                    )}
+                {/* 🔽 DROPDOWN ICON */}
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none"
+                />
+
+                {/* DROPDOWN */}
+                {activeSearchField === field.name &&
+                  searchResults[field.name]?.length > 0 && (
+                    <div className="absolute z-50 bg-white border w-full mt-1 max-h-40 overflow-auto rounded-md shadow">
+                      {searchResults[field.name].map((item: any) => (
+                        <div
+                          key={item.value}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            setFormState({
+                              ...formState,
+                              [field.name]: item.label
+                            })
+
+                            setActiveSearchField(null)
+
+                            if (field.onSelect) {
+                              field.onSelect(item, formState, setFormState)
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+              </div>
             )}
             {/* {field.type === "image" && (
 
@@ -373,7 +487,25 @@ export default function FormBuilder({
                   )}
               </div>
             )}
-
+{/* CHECKBOX */}
+{field.type === "checkbox" && (
+  <div className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      name={field.name}
+      checked={formState[field.name] || false}
+      disabled={field.disabled}
+      onChange={(e) => {
+        setFormState({
+          ...formState,
+          [field.name]: e.target.checked,
+        });
+      }}
+      className="h-4 w-4"
+    />
+    <span className="text-sm">{field.label}</span>
+  </div>
+)}
             {/* ERROR */}
             {errors[field.name] && (
               <p className="text-red-500 text-sm">
@@ -392,6 +524,19 @@ export default function FormBuilder({
           >
             Reset
           </Button>
+         <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            if (backPath) {
+              navigate(backPath)
+            } else {
+              navigate(-1) // fallback
+            }
+          }}
+        >
+          {backLabel}
+        </Button>
         </div>
 
       </form>

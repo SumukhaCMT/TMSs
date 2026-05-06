@@ -2,7 +2,9 @@
 
 import FormBuilder from "@/components/common/FormBuilder"
 import AppBreadcrumb from "@/components/common/AppBreadcrumb"
-import axios from "axios"
+// import axios from "axios"
+import api from "@/axios/axios"
+
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { validateSevaBookingForm } from "@/utils/validateSevaBooking";
@@ -19,8 +21,8 @@ import { Button } from "@/components/ui/button"
 import { secureStorage } from "@/utils/secureStorage"
 
 export default function EditSevaBooking() {
-  const today = new Date().toISOString().split("T")[0]; //  FIXED
-  const now = new Date();
+ const today = new Date().toISOString().split("T")[0]; //  FIXED
+const now = new Date();
   const { id } = useParams()
 
   const navigate = useNavigate()
@@ -54,9 +56,9 @@ export default function EditSevaBooking() {
 
       const token = secureStorage.getItem("token")
 
-      const res = await axios.get(
+      const res = await api.get(
 
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/seva-bookings/${id}`,
+        `/v1/temple/seva-bookings/${id}`,
 
         {
           headers: {
@@ -95,7 +97,7 @@ export default function EditSevaBooking() {
   //  UPDATE SEVA
 
   const handleSubmit = async (formData: any) => {
-    const validationErrors = validateSevaBookingForm(formData);
+  const validationErrors = validateSevaBookingForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors); // <-- show inline errors
       return;
@@ -104,9 +106,9 @@ export default function EditSevaBooking() {
 
       const token = secureStorage.getItem("token")
 
-      await axios.put(
+      await api.put(
 
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/seva-bookings/${id}`,
+        `/v1/temple/seva-bookings/${id}`,
 
         formData,
 
@@ -176,220 +178,220 @@ export default function EditSevaBooking() {
         submitLabel="Update"
 
         defaultValues={data}
-        errors={errors}
+  errors={errors} 
         onSubmit={handleSubmit}
 
+       
+fields={[
 
-        fields={[
+  // BASIC
+  
+  {
+    name: "seva_id",
+    label: "Seva ID",
+    type: "number",
+    disabled: true
+  },
+  {
+    name: "deity_id",
+    label: "Deity ID",
+    type: "number",
+    disabled: true
+  },
 
-          // BASIC
+  // DEVOTEE DETAILS
+  {
+    name: "devotee_name",
+    label: "Devotee Name",
+    placeholder: "Enter the full name of the devotee"
+  },
+  {
+    name: "devotee_phone",
+    label: "Phone",
+    placeholder: "Enter the devotee's phone number"
+  },
+  {
+    name: "devotee_email",
+    label: "Email",
+    type: "email",
+    placeholder: "Enter the devotee's email address"
+  },
+  {
+    name: "devotee_gotra",
+    label: "Gotra",
+    placeholder: "Enter the gotra for the devotee"
+  },
+  {
+    name: "devotee_rashi",
+    label: "Rashi",
+    placeholder: "Enter the rashi for the devotee"
+  },
+  {
+    name: "devotee_nakshatra",
+    label: "Nakshatra",
+    placeholder: "Enter the nakshatra for the devotee"
+  },
+  {
+    name: "devotee_dob",
+    label: "DOB",
+    type: "date",
+       max: new Date().toISOString().split("T")[0]  
+  },
+  {
+    name: "devotee_gender",
+    label: "Gender",
+    type: "search-select",
+    options: [
+      { label: "Male", value: "male" },
+      { label: "Female", value: "female" },
+      { label: "Other", value: "other" }
+    ]
+  },
 
-          {
-            name: "seva_id",
-            label: "Seva ID",
-            type: "number",
-            disabled: true
-          },
-          {
-            name: "deity_id",
-            label: "Deity ID",
-            type: "number",
-            disabled: true
-          },
+  // SEVA
+  {
+    name: "seva_name",
+    label: "Seva Name",
+    required: true,
+    placeholder: "Enter the name of the seva"
+  },
+  {
+    name: "seva_amount",
+    label: "Amount",
+    type: "number",
+    required: true,
+    placeholder: "Enter the amount for the seva booking"
+  },
+  {
+    name: "quantity",
+    label: "Quantity",
+    type: "number",
+    placeholder: "Enter the quantity for the seva booking"
+  },
 
-          // DEVOTEE DETAILS
-          {
-            name: "devotee_name",
-            label: "Devotee Name",
-            placeholder: "Enter the full name of the devotee"
-          },
-          {
-            name: "devotee_phone",
-            label: "Phone",
-            placeholder: "Enter the devotee's phone number"
-          },
-          {
-            name: "devotee_email",
-            label: "Email",
-            type: "email",
-            placeholder: "Enter the devotee's email address"
-          },
-          {
-            name: "devotee_gotra",
-            label: "Gotra",
-            placeholder: "Enter the gotra for the devotee"
-          },
-          {
-            name: "devotee_rashi",
-            label: "Rashi",
-            placeholder: "Enter the rashi for the devotee"
-          },
-          {
-            name: "devotee_nakshatra",
-            label: "Nakshatra",
-            placeholder: "Enter the nakshatra for the devotee"
-          },
-          {
-            name: "devotee_dob",
-            label: "DOB",
-            type: "date",
-            max: new Date().toISOString().split("T")[0]
-          },
-          {
-            name: "devotee_gender",
-            label: "Gender",
-            type: "select",
-            options: [
-              { label: "Male", value: "male" },
-              { label: "Female", value: "female" },
-              { label: "Other", value: "other" }
-            ]
-          },
+  // DATE
+  {
+    name: "calendar_type",
+    label: "Calendar",
+    type: "search-select",
+    options: [
+      { label: "Gregorian", value: "gregorian" },
+      { label: "Hindu", value: "hindu" }
+    ]
+  },
 
-          // SEVA
-          {
-            name: "seva_name",
-            label: "Seva Name",
-            required: true,
-            placeholder: "Enter the name of the seva"
-          },
-          {
-            name: "seva_amount",
-            label: "Amount",
-            type: "number",
-            required: true,
-            placeholder: "Enter the amount for the seva booking"
-          },
-          {
-            name: "quantity",
-            label: "Quantity",
-            type: "number",
-            placeholder: "Enter the quantity for the seva booking"
-          },
+  {
+    name: "scheduled_date",
+    label: "Scheduled Date",
+    type: "date",
+  
+  },
+  {
+    name: "scheduled_time",
+    label: "Scheduled Time",
+    type: "time"
+  },
 
-          // DATE
-          {
-            name: "calendar_type",
-            label: "Calendar",
-            type: "select",
-            options: [
-              { label: "Gregorian", value: "gregorian" },
-              { label: "Hindu", value: "hindu" }
-            ]
-          },
+  // RECURRING
+  {
+    name: "is_recurring",
+    label: "Recurring",
+    type: "search-select",
+    options: [
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" }
+    ]
+  },
 
-          {
-            name: "scheduled_date",
-            label: "Scheduled Date",
-            type: "date",
+  {
+    name: "recurring_interval",
+    label: "Interval",
+    type: "search-select",
+    options: [
+      { label: "Daily", value: "daily" },
+      { label: "Weekly", value: "weekly" },
+      { label: "Monthly", value: "monthly" },
+      { label: "Yearly", value: "yearly" }
+    ]
+  },
 
-          },
-          {
-            name: "scheduled_time",
-            label: "Scheduled Time",
-            type: "time"
-          },
+  {
+    name: "recurring_count",
+    label: "Recurring Count",
+    type: "number"
+  },
 
-          // RECURRING
-          {
-            name: "is_recurring",
-            label: "Recurring",
-            type: "select",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
+  // PAYMENT
+  {
+    name: "payment_status",
+    label: "Payment Status",
+    type: "search-select",
+    options: [
+      { label: "Pending", value: "pending" },
+      { label: "Paid", value: "paid" },
+      { label: "Partial", value: "partial" },
+      { label: "Failed", value: "failed" }
+    ]
+  },
 
-          {
-            name: "recurring_interval",
-            label: "Interval",
-            type: "select",
-            options: [
-              { label: "Daily", value: "daily" },
-              { label: "Weekly", value: "weekly" },
-              { label: "Monthly", value: "monthly" },
-              { label: "Yearly", value: "yearly" }
-            ]
-          },
+  {
+    name: "payment_method_snapshot",
+    label: "Payment Method",
+    placeholder: "Enter the payment method used by the devotee"
+  },
 
-          {
-            name: "recurring_count",
-            label: "Recurring Count",
-            type: "number"
-          },
+  {
+    name: "total_amount",
+    label: "Total Amount",
+    type: "number",
+    required: true,
+    placeholder: "Enter the total amount for the seva booking"  
+  },
 
-          // PAYMENT
-          {
-            name: "payment_status",
-            label: "Payment Status",
-            type: "select",
-            options: [
-              { label: "Pending", value: "pending" },
-              { label: "Paid", value: "paid" },
-              { label: "Partial", value: "partial" },
-              { label: "Failed", value: "failed" }
-            ]
-          },
+  {
+    name: "paid_amount",
+    label: "Paid Amount",
+    type: "number",
+    placeholder: "Enter the amount paid by the devotee"
+  },
 
-          {
-            name: "payment_method_snapshot",
-            label: "Payment Method",
-            placeholder: "Enter the payment method used by the devotee"
-          },
+  {
+    name: "receipt_number",
+    label: "Receipt Number",
+    placeholder: "Enter the receipt number"
+  },
 
-          {
-            name: "total_amount",
-            label: "Total Amount",
-            type: "number",
-            required: true,
-            placeholder: "Enter the total amount for the seva booking"
-          },
+  // STATUS
+  {
+    name: "status",
+    label: "Status",
+    type: "search-select",
+    options: [
+      { label: "Booked", value: "booked" },
+      { label: "Confirmed", value: "confirmed" },
+      { label: "Completed", value: "completed" },
+      { label: "Cancelled", value: "cancelled" }
+    ]
+  },
 
-          {
-            name: "paid_amount",
-            label: "Paid Amount",
-            type: "number",
-            placeholder: "Enter the amount paid by the devotee"
-          },
+  // NOTES
+  {
+    name: "remark",
+    label: "Remark",
+    type: "textarea",
+    colSpan: 4,
+      placeholder: "This remark will be visible to devotees"
+  },
+  {
+    name: "internal_note",
+    label: "Internal Note",
+    type: "textarea",
+    colSpan: 4,
+      placeholder: "This note is for internal use and will not be visible to devotees"
+    
+  }
 
-          {
-            name: "receipt_number",
-            label: "Receipt Number",
-            placeholder: "Enter the receipt number"
-          },
-
-          // STATUS
-          {
-            name: "status",
-            label: "Status",
-            type: "select",
-            options: [
-              { label: "Booked", value: "booked" },
-              { label: "Confirmed", value: "confirmed" },
-              { label: "Completed", value: "completed" },
-              { label: "Cancelled", value: "cancelled" }
-            ]
-          },
-
-          // NOTES
-          {
-            name: "remark",
-            label: "Remark",
-            type: "textarea",
-            colSpan: 4,
-            placeholder: "This remark will be visible to devotees"
-          },
-          {
-            name: "internal_note",
-            label: "Internal Note",
-            type: "textarea",
-            colSpan: 4,
-            placeholder: "This note is for internal use and will not be visible to devotees"
-
-          }
-
-        ]}
+]}
       />
 
 
@@ -405,7 +407,7 @@ export default function EditSevaBooking() {
 
             <DialogTitle>
 
-              Seva Updated Successfully
+               Seva Updated Successfully
 
             </DialogTitle>
 

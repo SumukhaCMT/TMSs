@@ -2,86 +2,131 @@ import { Request, Response } from "express";
 import db from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
+
 /**
  * GET ALL PAYMENT METHODS
  */
 export const getPaymentMethods = async (req: Request, res: Response) => {
+
   try {
+
     const organization_id = req.user!.organization_id;
     const temple_id = req.user!.temple_id;
 
     const [rows] = await db.query<RowDataPacket[]>(
+
       `SELECT *
        FROM payment_methods
        WHERE organization_id = ?
        AND temple_id = ?
        ORDER BY display_order ASC`,
+
       [organization_id, temple_id]
+
     );
 
     res.json({
+
       success: true,
       data: rows
+
     });
-  } catch (error: any) {
+
+  }
+  catch (error: any) {
+
     res.status(500).json({
+
       success: false,
       message: error.message
+
     });
+
   }
+
 };
+
+
 
 /**
  * GET PAYMENT METHOD BY ID
  */
 export const getPaymentMethodById = async (req: Request, res: Response) => {
+
   try {
+
     const { id } = req.params;
 
     const [rows] = await db.query<RowDataPacket[]>(
+
       `SELECT *
        FROM payment_methods
        WHERE id = ?`,
+
       [id]
+
     );
 
     res.json({
+
       success: true,
       data: rows[0]
+
     });
-  } catch (error: any) {
+
+  }
+  catch (error: any) {
+
     res.status(500).json({
+
       success: false,
       message: error.message
+
     });
+
   }
+
 };
+
+
 
 /**
  * CREATE PAYMENT METHOD
  */
 export const createPaymentMethod = async (req: Request, res: Response) => {
+
   try {
+
     const organization_id = req.user!.organization_id;
     const temple_id = req.user!.temple_id;
 
+
     const {
+
       payment_method,
       payment_method_type = "offline",
       remark = null,
       is_default = "no",
       display_order = 1,
       status = "active"
+
     } = req.body;
 
+
     if (!payment_method) {
+
       return res.status(400).json({
+
         success: false,
         message: "Payment method is required"
+
       });
+
     }
 
+
     const [result] = await db.query<ResultSetHeader>(
+
       `INSERT INTO payment_methods
       (
         organization_id,
@@ -94,7 +139,9 @@ export const createPaymentMethod = async (req: Request, res: Response) => {
         status
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+
       [
+
         organization_id,
         temple_id,
         payment_method,
@@ -103,32 +150,53 @@ export const createPaymentMethod = async (req: Request, res: Response) => {
         is_default,
         display_order,
         status
+
       ]
+
     );
 
+
     res.status(201).json({
+
       success: true,
       message: "Payment Method created successfully",
       id: result.insertId
+
     });
-  } catch (error: any) {
+
+  }
+
+  catch (error: any) {
+
     if (error.code === "ER_DUP_ENTRY") {
+
       return res.status(400).json({
+
         success: false,
         message: "Payment Method already exists"
+
       });
+
     }
 
     res.status(500).json({
+
       success: false,
       message: error.message
+
     });
+
   }
+
 };
+
+
+
 
 /**
  * UPDATE PAYMENT METHOD
  */
+
 export const updatePaymentMethod = async (req: Request, res: Response) => {
   const connection = await db.getConnection();
 
@@ -190,8 +258,7 @@ export const updatePaymentMethod = async (req: Request, res: Response) => {
       ]
     );
 
-    // FIXED: Cast result to any to bypass strict TypeScript checking on QueryResult
-    if ((result as any).affectedRows === 0) {
+    if (result.affectedRows === 0) {
       await connection.rollback();
       return res.status(404).json({
         success: false,
@@ -243,26 +310,41 @@ export const updatePaymentMethod = async (req: Request, res: Response) => {
   }
 };
 
+
 /**
  * DELETE PAYMENT METHOD
  */
 export const deletePaymentMethod = async (req: Request, res: Response) => {
+
   try {
+
     const { id } = req.params;
 
     await db.query(
+
       `DELETE FROM payment_methods WHERE id = ?`,
       [id]
+
     );
 
     res.json({
+
       success: true,
       message: "Payment Method deleted successfully"
+
     });
-  } catch (error: any) {
+
+  }
+
+  catch (error: any) {
+
     res.status(500).json({
+
       success: false,
       message: error.message
+
     });
+
   }
+
 };

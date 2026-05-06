@@ -31,20 +31,47 @@ type Column<T> = {
   render?: (row: T) => React.ReactNode
 }
 
+// type DataTableProps<T> = {
+//   data: T[]
+//   columns: Column<T>[]
+//   storageKey: string
+
+
+//       addLabel?: string
+//   addDisabled?: boolean
+//   addVariant?: "default" | "outline" | "destructive"
+//    onAdd?: () => void
+
+
+
+//   onEdit?: (row: T) => void
+//   onView?: (row: T) => void
+//   onDelete?: (row: T) => void
+//   onCancle? :(row:T) => void
+// }
 type DataTableProps<T> = {
   data: T[]
   columns: Column<T>[]
   storageKey: string
+
+  onAdd?: () => void
+  addLabel?: string
+  addDisabled?: boolean
+  addVariant?: "default" | "outline" | "destructive"
+
   onEdit?: (row: T) => void
   onView?: (row: T) => void
   onDelete?: (row: T) => void
-  onCancle? :(row:T) => void
+  onCancle?: (row: T) => void
 }
-
 export default function DataTable<T extends { id: number | string }>({
   data,
   columns,
   storageKey,
+  onAdd,
+  addLabel,
+  addDisabled,
+  addVariant,
   onEdit,
   onView,
   onDelete,
@@ -68,19 +95,22 @@ export default function DataTable<T extends { id: number | string }>({
     JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
   )
 
-  const itemsPerPage = 10
+  // const itemsPerPage = 20
+  const [itemsPerPage, setItemsPerPage] = useState(20)
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentItems = filteredData.slice(
     startIndex,
     startIndex + itemsPerPage
   )
-
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [itemsPerPage])
   return (
     <>
       {/* SEARCH + COLUMN SELECT */}
-      
-      <div className="mb-4 flex justify-between gap-4">
+
+      <div className="mb-4 flex justify-between items-center">
         <Input
           placeholder="Search..."
           value={search}
@@ -90,41 +120,69 @@ export default function DataTable<T extends { id: number | string }>({
           }}
           className="max-w-sm"
         />
+        {onAdd && (
+          <Button
+            onClick={onAdd}
+            disabled={addDisabled}
+            variant={addVariant || "default"}
+          >
+            {addLabel ?? "Add"}
+          </Button>
+        )}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Rows Select:</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              className="border rounded px-2 py-1 text-sm"
+            >
+              <option value={20}>20</option>
+              <option value={40}>40</option>
+              <option value={60}>60</option>
+            </select>
+          </div>
+          {/* {onAdd && (
+        <Button onClick={onAdd}>
+          Add
+        </Button>
+      )} */}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">Select Columns</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {columns.map((col) => (
-              <DropdownMenuItem
-                key={String(col.key)}
-                onSelect={(e) => e.preventDefault()}
-              >
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={selectedColumns.includes(col.key)}
-                  onChange={() =>
-                    setSelectedColumns((prev) =>
-                      prev.includes(col.key)
-                        ? prev.filter((c) => c !== col.key)
-                        : [...prev, col.key]
-                    )
-                  }
-                />
-                {col.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Select Columns</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {columns.map((col) => (
+                <DropdownMenuItem
+                  key={String(col.key)}
+                  onSelect={(e) => e.preventDefault()}
+                >
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={selectedColumns.includes(col.key)}
+                    onChange={() =>
+                      setSelectedColumns((prev) =>
+                        prev.includes(col.key)
+                          ? prev.filter((c) => c !== col.key)
+                          : [...prev, col.key]
+                      )
+                    }
+                  />
+                  {col.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* TABLE */}
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-center">#</TableHead>
+            <TableHead className="text-center">SL.No</TableHead>
             {columns.map(
               (col) =>
                 selectedColumns.includes(col.key) && (
@@ -173,8 +231,8 @@ export default function DataTable<T extends { id: number | string }>({
                         Edit
                       </DropdownMenuItem>
                     )}
-                    
-                     {onCancle && (
+
+                    {onCancle && (
                       <DropdownMenuItem onClick={() => onCancle(row)}>
                         Cancle
                       </DropdownMenuItem>

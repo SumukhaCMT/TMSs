@@ -61,13 +61,14 @@ export default function TokensTable() {
              { label: "Dashboard", to: "/dashboard" },
               { label: "Tokens Issue", to: "/tokens/list" },
              { label: "Tokens List" },
-             { label: "Create Tokens", to: "/tokens/add" },
+            //  { label: "Create Tokens", to: "/tokens/add" },
            ]}
          />
 
 <DataTable
         title="Tokens"
         data={tokens}
+        addLabel="Add Tokens"
         onAdd={() => navigate("/tokens/add")}
         onView={(row) => navigate(`/tokens/${row.id}/print`)}
         onEdit={(row) => {

@@ -55,12 +55,14 @@ export default function DevoteesTable() {
         items={[
           { label: "Dashboard", to: "/dashboard" },
           { label: "Devotees List" },
-          { label: "Add Devotee", to: "/devotees/add" },
+          // { label: "Add Devotee", to: "/devotees/add" },
         ]}
       />
 
       <DataTable
         data={devotees}   // ✅ FIXED (was wrong state)
+          addLabel="Add Devotee"
+         onAdd={() => navigate("/devotees/add")}
         loading={loading}
         storageKey="devotees"
         columns={[
@@ -71,6 +73,9 @@ export default function DevoteesTable() {
           { key: "city", label: "City" },
           { key: "status", label: "Status" },
         ]}
+        //  onAdd={() => navigate("/devotees/add")}
+         
+        
         onEdit={(row) => navigate(`/devotees/${row.id}/edit`)}
         onDelete={handleDeleteClick}
       />

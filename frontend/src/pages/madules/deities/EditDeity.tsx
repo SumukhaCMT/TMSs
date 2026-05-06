@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom"
 
 import FormBuilder from "@/components/common/FormBuilder"
 import AppBreadcrumb from "@/components/common/AppBreadcrumb"
-import { secureStorage } from "@/utils/secureStorage"
 import imageCompression from "browser-image-compression"
+import api, { IMAGE_URLS } from "@/axios/axios";
 
 import {
   Dialog,
@@ -16,11 +16,10 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
-import api, { IMAGE_URLS } from "@/axios/axios";
+
 export default function EditDeity() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const token = secureStorage.getItem("token")
 
   const [formData, setFormData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -28,57 +27,38 @@ export default function EditDeity() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [dialogMessage, setDialogMessage] = useState("")
 
-  // const IMAGE_URL = "https://tms-backend-x26c.onrender.com/public/deities/"; 
   // ================= FETCH =================
   useEffect(() => {
-    const fetchDeity = async () => {
-      try {
-        const res = await fetch(
-          "https://tms-backend-x26c.onrender.com/api/v1/temple/deities",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+    if (id) fetchDeity()
+  }, [id])
 
-        const result = await res.json()
-        const deity = result.data.find((d: any) => d.id == id)
+  const fetchDeity = async () => {
+    try {
+      const res = await api.get("/v1/temple/deities")
 
-        setFormData(deity)
-      } catch (error) {
-        setDialogMessage("Failed to fetch deity")
-        setOpenDialog(true)
-      } finally {
-        setLoading(false)
-      }
+      const deity = res.data.data.find((d: any) => d.id == id)
+
+      if (!deity) throw new Error("Deity not found")
+
+      setFormData(deity)
+
+    } catch (err: any) {
+      setDialogMessage(err.message || "Failed to fetch deity")
+      setOpenDialog(true)
+    } finally {
+      setLoading(false)
     }
-
-    if (token && id) {
-      fetchDeity()
-    }
-  }, [id, token])
-
-  if (loading) return <>Loading...</>
-  if (!formData) return null
+  }
 
   // ================= VALIDATION =================
   const validateForm = (data: any) => {
     const newErrors: Record<string, string> = {}
-    const deitiesName = data.name?.trim() || ""
+    const name = data.name?.trim() || ""
 
-    if (!deitiesName) {
-      newErrors.name = "Name is required"
-    }
-    else if (deitiesName.length < 3) {
-      newErrors.name = "Minimum 3 characters required"
-    }
-    else if (deitiesName.length > 50) {
-      newErrors.name = "Maximum 50 characters allowed"
-    }
-    else if (/\d/.test(deitiesName)) {
-      newErrors.name = "Numbers are not allowed"
-    }
+    if (!name) newErrors.name = "Name is required"
+    else if (name.length < 3) newErrors.name = "Minimum 3 characters required"
+    else if (name.length > 50) newErrors.name = "Maximum 50 characters allowed"
+    else if (/\d/.test(name)) newErrors.name = "Numbers are not allowed"
 
     if (!data.code?.trim()) {
       newErrors.code = "Code is required"
@@ -99,24 +79,20 @@ export default function EditDeity() {
     setErrors({})
 
     try {
-      const formDataObj = new FormData()
+      const payload = new FormData()
 
-      formDataObj.append("name", data.name.trim())
-      formDataObj.append("code", data.code.trim())
-      formDataObj.append("description", data.description || "")
-      formDataObj.append("status", data.status || "active")
+      payload.append("name", data.name.trim())
+      payload.append("code", data.code.trim())
+      payload.append("description", data.description || "")
+      payload.append("status", data.status || "active")
 
-      //  Convert to WebP before sending
       if (data.img_name instanceof File) {
-
-        const options = {
+        const compressedFile = await imageCompression(data.img_name, {
           maxSizeMB: 1,
           maxWidthOrHeight: 1920,
           useWebWorker: true,
           fileType: "image/webp",
-        }
-
-        const compressedFile = await imageCompression(data.img_name, options)
+        })
 
         const webpFile = new File(
           [compressedFile],
@@ -124,42 +100,36 @@ export default function EditDeity() {
           { type: "image/webp" }
         )
 
-        formDataObj.append("img_name", webpFile)
+        payload.append("img_name", webpFile)
       }
 
-      const res = await fetch(
-        `https://tms-backend-x26c.onrender.com/api/v1/temple/deities/${id}`,
-        {
-          method: "PUT",
+      // await api.put(`/v1/temple/deities/${id}`, payload)
+              await api.put(`/v1/temple/deities/${id}`, payload, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
-          body: formDataObj,
-        }
-      )
+        })
 
-      const result = await res.json()
-
-      if (!res.ok) {
-        if (result.message?.toLowerCase().includes("duplicate")) {
-          setErrors({ code: "Code already exists" })
-          return
-        }
-
-        setDialogMessage(result.message || "Update failed")
-        setOpenDialog(true)
-        return
-      }
-
-      //  Success
       setDialogMessage("Deity Updated Successfully")
       setOpenDialog(true)
 
     } catch (err: any) {
-      setDialogMessage("Something went wrong")
+      let message =
+        err.response?.data?.message || "Update failed"
+
+      if (message.toLowerCase().includes("duplicate")) {
+        setErrors({ code: "Code already exists" })
+        return
+      }
+
+      setDialogMessage(message)
       setOpenDialog(true)
     }
   }
+
+  if (loading) return <>Loading...</>
+  if (!formData) return null
+
   return (
     <div>
       <AppBreadcrumb
@@ -178,21 +148,21 @@ export default function EditDeity() {
         errors={errors}
         fields={[
           {
-            name: "name", label: "Name",
+            name: "name",
+            label: "Name",
             required: true,
-            placeholder: "Enter the name of the deity"
-
+            placeholder: "Enter the name",
           },
-
           {
-            name: "code", label: "Code",
+            name: "code",
+            label: "Code",
             required: true,
-            placeholder: "Enter a unique code for the deity"
+            placeholder: "Enter the code",
           },
           {
             name: "status",
             label: "Status",
-            type: "select",
+            type: "search-select",
             options: [
               { label: "Active", value: "active" },
               { label: "Inactive", value: "inactive" },
@@ -202,22 +172,20 @@ export default function EditDeity() {
             name: "img_name",
             label: "Image",
             type: "image",
-            url: formData.img_name ? IMAGE_URLS.deities + formData.img_name : null, alt: formData.name || "Deity Image"
-
+            url: formData?.img_name
+              ? IMAGE_URLS.deities + formData.img_name
+              : null,
           },
-
           {
             name: "description",
             label: "Description",
             type: "textarea",
             colSpan: 4,
-            placeholder: "Provide a detailed description of the deity, including history, significance, and any special attributes or stories associated with them."
+            placeholder: "Enter the description",
           },
-
         ]}
       />
 
-      {/*  SUCCESS / ERROR DIALOG */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>

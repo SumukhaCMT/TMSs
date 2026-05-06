@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
+// import axios from "axios"
+import api from "@/axios/axios"
 import FormBuilder from "@/components/common/FormBuilder"
 import AppBreadcrumb from "@/components/common/AppBreadcrumb"
 import { validateTokensForm } from "@/utils/validateTokensForm"
@@ -30,8 +31,8 @@ export default function AddTokens() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const [sevaRes, deityRes] = await Promise.all([
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/sevas", { headers }),
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/deities", { headers }),
+          api.get("/v1/temple/sevas", { headers }),
+          api.get("/v1/temple/deities", { headers }),
         ])
 
         // If you need sevas later, keep it. Otherwise remove.
@@ -100,7 +101,8 @@ export default function AddTokens() {
             name: "display_order",
             label: "Display Order",
             type: "number",
-            required: true
+            required: true,
+            placeholder: "Enter the display order (numeric value)"
           },
           {
             name: "seva_search",
@@ -110,8 +112,8 @@ export default function AddTokens() {
             required: true,
 
             onSearch: async (value: string) => {
-              const res = await axios.get(
-                `https://tms-backend-x26c.onrender.com/api/v1/temple/sevas/search?q=${value}`,
+              const res = await api.get(
+                `/v1/temple/sevas/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               )
 
@@ -137,7 +139,8 @@ export default function AddTokens() {
           {
             name: "deity_id",
             label: "Deity",
-            type: "select",
+            placeholder: "Select the deity",
+            type: "search-select",
             required: true,
             options: deities.map((d) => ({
               label: d.name,

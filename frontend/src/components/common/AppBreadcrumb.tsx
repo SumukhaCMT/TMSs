@@ -19,7 +19,7 @@ type AppBreadcrumbProps = {
 
 export default function AppBreadcrumb({ items }: AppBreadcrumbProps) {
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full flex justify-end "  >
       <Breadcrumb>
         <BreadcrumbList>
           {items.map((item, index) => (

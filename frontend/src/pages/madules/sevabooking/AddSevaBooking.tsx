@@ -6,7 +6,8 @@
 
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import api from "@/axios/axios"
 import { useNavigate } from "react-router-dom";
 
 import FormBuilder from "@/components/common/FormBuilder";
@@ -48,10 +49,10 @@ export default function AddSevaBooking() {
       try {
         const headers = { Authorization: `Bearer ${token}` };
         const [sevaRes, deityRes, devoteeRes, paymentRes] = await Promise.all([
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/sevas", { headers }),
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/deities", { headers }),
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/devotees", { headers }),
-          axios.get("https://tms-backend-x26c.onrender.com/api/v1/temple/payment-methods", { headers }),
+          api.get("/v1/temple/sevas", { headers }),
+          api.get("/v1/temple/deities", { headers }),
+          api.get("/v1/temple/devotees", { headers }),
+          api.get("/v1/temple/payment-methods", { headers }),
         ]);
 
         setSevas(sevaRes.data.data);
@@ -123,7 +124,7 @@ export default function AddSevaBooking() {
         internal_note: formData.internal_note || null,
       };
 
-      await axios.post("https://tms-backend-x26c.onrender.com/api/v1/temple/seva-bookings", data, {
+      await api.post("/v1/temple/seva-bookings", data, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // console.log(data)
@@ -143,21 +144,60 @@ export default function AddSevaBooking() {
     }
   };
 
+  // const handleDate = async (e: any, formState: any, setFormState: any) => {
+
+  //   const value = e.target.value
+
+  //   if (!value) return
+
+  //   try {
+
+  //     const res = await fetch(`https://tms-backend-x26c.onrender.com/panchanga?date=${value}`)
+  //     const json = await res.json()
+
+  //     // console.log("Panchanga:", json)
+
+  //     setFormState({
+  //       ...formState,
+  //       scheduled_date: value,
+  //       hindu_tithi: json.tithi || "",
+  //       hindu_nakshatra: json.nakshatra || "",
+  //       devotee_rashi: json.rashi || "",
+  //       hindu_month: json.masa || "",
+  //       hindu_samvat: json.samvatsara || "",
+  //       hindu_paksha: json.paksha || "",
+  //       hindu_shaka_year: json.hindu_shaka_year || "",
+
+  //     })
+
+  //   } catch (err) {
+  //     console.error("Panchanga error", err)
+  //   }
+
+  // }
   const handleDate = async (e: any, formState: any, setFormState: any) => {
-
-    const value = e.target.value
-
-    if (!value) return
+    const value = e.target.value;
+    if (!value) return;
 
     try {
+      const user = secureStorage.getItem("user");
 
-      const res = await fetch(`https://tms-backend-x26c.onrender.com/panchanga?date=${value}`)
-      const json = await res.json()
+      const lat = user?.temple?.lat;
+      const lng = user?.temple?.lng;
 
-      // console.log("Panchanga:", json)
+      if (!lat || !lng) {
+        console.warn("Temple location missing");
+        return;
+      }
 
-      setFormState({
-        ...formState,
+      const res = await fetch(
+        `https://tms-backend-x26c.onrender.com/api/v1/panchanga?date=${value}&lat=${lat}&lng=${lng}`
+      );
+
+      const json = await res.json();
+
+      setFormState((prev: any) => ({
+        ...prev,
         scheduled_date: value,
         hindu_tithi: json.tithi || "",
         hindu_nakshatra: json.nakshatra || "",
@@ -167,13 +207,16 @@ export default function AddSevaBooking() {
         hindu_paksha: json.paksha || "",
         hindu_shaka_year: json.hindu_shaka_year || "",
 
-      })
+
+        // ✅ NEW
+        leap_year: json.leap_year || false,
+        adhika_masa: json.adhika_masa || false,
+      }));
 
     } catch (err) {
-      console.error("Panchanga error", err)
+      console.error("Panchanga error", err);
     }
-
-  }
+  };
 
   return (
     <>
@@ -208,8 +251,8 @@ export default function AddSevaBooking() {
             required: true,
 
             onSearch: async (value: string) => {
-              const res = await axios.get(
-                `https://tms-backend-x26c.onrender.com/api/v1/temple/devotees/search?q=${value}`,
+              const res = await api.get(
+                `/v1/temple/devotees/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               return res.data.data;
@@ -238,8 +281,8 @@ export default function AddSevaBooking() {
             required: true,
 
             onSearch: async (value: string) => {
-              const res = await axios.get(
-                `https://tms-backend-x26c.onrender.com/api/v1/temple/sevas/search?q=${value}`,
+              const res = await api.get(
+                `/v1/temple/sevas/search?q=${value}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
 
@@ -267,7 +310,32 @@ export default function AddSevaBooking() {
           { name: "seva_name", label: "Seva Name", type: "text" },
 
 
-          { name: "deity_id", label: "Deity", type: "select", required: true, options: deities.map(d => ({ label: d.name, value: d.id })) },
+          // { name: "deity_id", label: "Deity", type: "select", required: true, options: deities.map(d => ({ label: d.name, value: d.id })) },
+          {
+            name: "deity_name",
+            label: "Deity",
+            type: "search-select",
+            placeholder: "Search or select deity",
+            required: true,
+            options: deities.map(d => ({
+              label: d.name,
+              value: d.id
+            })),
+            // onSelect: (item, formState, setFormState) => {
+            //   setFormState({
+            //     ...formState,
+            //     deity_id: item.value,
+            //     deity_name: item.label
+            //   })
+            // }
+            onSelect: (item, formState, setFormState) => {
+              setFormState(prev => ({
+                ...prev,
+                deity_id: item.value,
+                deity_name: item.label
+              }))
+            }
+          },
 
           {
             name: "scheduled_date", label: "Date", type: "date",
@@ -277,8 +345,27 @@ export default function AddSevaBooking() {
           { name: "scheduled_time", label: "Time", type: "time" },
           { name: "seva_amount", label: "Amount", type: "number", required: true, placeholder: "Enter the amount for the seva. This can be auto-filled when a seva is selected from the search field above." },
 
-          { name: "payment_method_id", label: "Payment Method", type: "select", required: true, options: paymentMethods.map(p => ({ label: p.payment_method, value: p.id })) },
+          // { name: "payment_method_id", label: "Payment Method", type: "select", required: true, options: paymentMethods.map(p => ({ label: p.payment_method, value: p.id })) },
+          {
+            name: "payment_method_name",
+            label: "Payment Method",
+            type: "search-select",
+            placeholder: "Search or select payment method",
+            required: true,
 
+            options: paymentMethods.map(p => ({
+              label: p.payment_method,
+              value: p.id
+            })),
+
+            onSelect: (item, formState, setFormState) => {
+              setFormState(prev => ({
+                ...prev,
+                payment_method_id: item.value,
+                payment_method_name: item.label
+              }))
+            }
+          },
 
 
           { name: "devotee_email", label: "Devotee Email", type: "email", placeholder: "Enter devotee's email address" },
@@ -287,7 +374,7 @@ export default function AddSevaBooking() {
             name: "devotee_dob", label: "Date of Birth", type: "date",
             max: new Date().toISOString().split("T")[0]
           },
-          { name: "devotee_gender", label: "Gender", type: "select", options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }] },
+          { name: "devotee_gender", label: "Gender", placeholder: "Select the gender", type: "search-select", options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }] },
 
           { name: "devotee_gotra", label: "Gotra", type: "text", placeholder: "Enter devotee's gotra" },
           { name: "devotee_rashi", label: "Rashi", type: "text", placeholder: "Enter devotee's rashi" },
@@ -309,7 +396,7 @@ export default function AddSevaBooking() {
           {
             name: "calendar_type",
             label: "Calendar Type",
-            type: "select",
+            type: "search-select",
             options: calendarTypeOptions,
           },
 
@@ -317,7 +404,8 @@ export default function AddSevaBooking() {
           {
             name: "is_recurring",
             label: "Recurring?",
-            type: "select",
+            type: "search-select",
+            placeholder: "Is this a recurring seva booking?",
             options: [
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
@@ -327,7 +415,8 @@ export default function AddSevaBooking() {
           {
             name: "recurring_interval",
             label: "Recurring Interval",
-            type: "select",
+            type: "search-select",
+            placeholder: "Select the recurring interval",
             options: [
               { label: "Daily", value: "daily" },
               { label: "Weekly", value: "weekly" },
@@ -340,6 +429,7 @@ export default function AddSevaBooking() {
           {
             name: "recurring_count",
             label: "Recurring Count",
+            placeholder: "Enter how many times this should recur",
             type: "number",
             showWhen: (formState: any) => formState.is_recurring === "yes"
           },
@@ -367,7 +457,22 @@ export default function AddSevaBooking() {
 
 
           { name: "hindu_nakshatra", label: "Hindu Nakshatra", type: "text", placeholder: "Enter the Hindu nakshatra for the scheduled date, if applicable" },
+          ,
 
+          {
+            name: "leap_year",
+            label: "Leap Year",
+            type: "checkbox",
+            disabled: true,
+            showWhen: (formState: any) => formState.calendar_type === "hindu"
+          },
+          {
+            name: "adhika_masa",
+            label: "Adhika Masa",
+            type: "checkbox",
+            disabled: true,
+            showWhen: (formState: any) => formState.calendar_type === "hindu"
+          }
         ]}
       />
 

@@ -106,7 +106,7 @@ export const loginUser = async (login: string, pass: string, ip: string, ua: str
         {
             id: user.id,
             user_type: user.user_type,
-            permissions: perms 
+            permissions: perms // Now perms is defined!
         },
         JWT_SECRET,
         { expiresIn: JWT_EXPIRES_IN as any }
@@ -114,7 +114,7 @@ export const loginUser = async (login: string, pass: string, ip: string, ua: str
 
     const refreshToken = jwt.sign(
         { id: user.id },
-        JWT_SECRET, 
+        JWT_SECRET, // Ideally use a separate REFRESH_SECRET
         { expiresIn: '7d' }
     );
 

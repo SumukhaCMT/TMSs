@@ -71,13 +71,14 @@ export default function SevasTable() {
         items={[
           { label: "Dashboard", to: "/dashboard" },
           { label: "Sevas List" },
-          { label: "Add Sevas", to: "/sevas/add" },
+          // { label: "Add Sevas", to: "/sevas/add" },
         ]}
       />
 
       <DataTable
         title="Sevas"
         data={sevas}
+         addLabel="Add Seva"
         onAdd={() => navigate("/sevas/add")}
         // onEdit={(row) => navigate(`/sevas/${row.id}/edit`)}
         onEdit={(row) => {
